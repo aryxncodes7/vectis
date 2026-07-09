@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "clean": "rm -rf dist",
+    "lint": "tsc --noEmit",
+    "test": "node --import tsx --test \"src/**/*.test.{ts,tsx}\" \"api/**/*.test.ts\" \"vite.config.test.ts\""
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
