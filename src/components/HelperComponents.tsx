@@ -6,6 +6,7 @@ export function AnimatedNumber({ value, duration = 600, formatter }: { value: nu
   const [displayVal, setDisplayVal] = useState(value);
   const prevValRef = useRef(value);
   const activeTargetRef = useRef(value);
+  const frameRef = useRef<number | null>(null);
 
   useEffect(() => {
     let startTimestamp: number | null = null;
@@ -15,7 +16,11 @@ export function AnimatedNumber({ value, duration = 600, formatter }: { value: nu
     
     if (startVal === endVal) return;
     
-    let animationFrameId: number;
+    // Ensure any previously running frame is canceled
+    if (frameRef.current !== null) {
+      cancelAnimationFrame(frameRef.current);
+    }
+    
     const step = (timestamp: number) => {
       if (activeTargetRef.current !== endVal) return; // Prevent race conditions
       
@@ -25,15 +30,18 @@ export function AnimatedNumber({ value, duration = 600, formatter }: { value: nu
       const current = startVal + (endVal - startVal) * ease;
       setDisplayVal(current);
       if (progress < 1) {
-        animationFrameId = requestAnimationFrame(step);
+        frameRef.current = requestAnimationFrame(step);
       } else {
         setDisplayVal(endVal);
         prevValRef.current = endVal;
+        frameRef.current = null;
       }
     };
-    animationFrameId = requestAnimationFrame(step);
+    frameRef.current = requestAnimationFrame(step);
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      if (frameRef.current !== null) {
+        cancelAnimationFrame(frameRef.current);
+      }
     };
   }, [value, duration]);
 
@@ -108,12 +116,17 @@ export function MagneticButton({ children, className = "", onClick, disabled, ty
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!buttonRef.current || !isMounted.current) return;
-    const { clientX, clientY } = e;
+    const { pageX, pageY } = e;
     const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
-    const centerX = left + width / 2;
-    const centerY = top + height / 2;
-    const pullX = (clientX - centerX) * 0.15;
-    const pullY = (clientY - centerY) * 0.15;
+    
+    // Normalize against scroll offset
+    const normalizedLeft = left + window.scrollX;
+    const normalizedTop = top + window.scrollY;
+    
+    const centerX = normalizedLeft + width / 2;
+    const centerY = normalizedTop + height / 2;
+    const pullX = (pageX - centerX) * 0.15;
+    const pullY = (pageY - centerY) * 0.15;
     setPosition({ x: pullX, y: pullY });
   };
 

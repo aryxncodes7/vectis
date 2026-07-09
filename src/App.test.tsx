@@ -14,9 +14,14 @@ globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);
 import App from "./App";
 import { act } from "react";
 
+// Helper to simulate network latency
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
 // Mock the global fetch
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url: RequestInfo | URL, init?: RequestInit) => {
+  await delay(10); // Simulate network latency
+  
   if (url === "/api/health") {
     return { ok: true, json: async () => ({ status: "healthy", mode: "LIVE_CORE" }) } as any;
   }
