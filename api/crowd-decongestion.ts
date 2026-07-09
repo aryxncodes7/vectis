@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getGeminiClient, generateContentWithRetry } from "./_utils/gemini.js";
 import { Type } from "@google/genai";
+import { CrowdAIResponseSchema } from "../src/types.js";
 
 /**
  * Vercel Serverless Endpoint: Dynamic Crowd De-congestion
@@ -139,7 +140,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const parsedData = JSON.parse(response.text || "{}");
-    return res.status(200).json({ mode: "LIVE_CORE", data: parsedData });
+    const validatedData = CrowdAIResponseSchema.parse(parsedData);
+    return res.status(200).json({ mode: "LIVE_CORE", data: validatedData });
   } catch (error: any) {
     console.warn("Gemini Crowd Ingestion Error:", error);
     return res.status(503).json({ error: "TELEMETRY LINK DEGRADED" });

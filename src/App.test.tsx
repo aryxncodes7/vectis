@@ -17,35 +17,6 @@ import { act } from "react";
 // Helper to simulate network latency
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Mock the global fetch
-const originalFetch = globalThis.fetch;
-globalThis.fetch = async (url: RequestInfo | URL, init?: RequestInit) => {
-  await delay(10); // Simulate network latency
-  
-  if (url === "/api/health") {
-    return { ok: true, json: async () => ({ status: "healthy", mode: "LIVE_CORE" }) } as any;
-  }
-  if (url === "/api/crowd-decongestion") {
-    // Return a mocked 200 response
-    return { 
-      ok: true, 
-      json: async () => ({ 
-        mode: "LIVE_CORE", 
-        data: { status: "NORMAL", updatedSignage: [] } 
-      }) 
-    } as any;
-  }
-  if (url === "/api/multilingual-incident") {
-    // Return a mocked 503 response to test DEGRADED state
-    return { 
-      ok: false, 
-      status: 503,
-      json: async () => ({ error: "TELEMETRY LINK DEGRADED" }) 
-    } as any;
-  }
-  return { ok: true, json: async () => ({}) } as any;
-};
-
 test("SCOPE App Main Orchestrator Integration Suite", async (t) => {
   await t.test("App component exports and is instantiable", () => {
     assert.strictEqual(typeof App, "function");
@@ -53,8 +24,29 @@ test("SCOPE App Main Orchestrator Integration Suite", async (t) => {
     assert.strictEqual(element.type, App);
   });
   
-  await t.test("App triggers evaluations and handles mocked success/failure states", async () => {
-    // Create an instance for testing (would ideally use RTL, but using native testing principles here)
+  await t.test("App triggers evaluations and handles mocked success/failure states", async (t) => {
+    // Inject scoped mock to prevent test pollution
+    t.mock.method(globalThis, 'fetch', async (url: RequestInfo | URL, init?: RequestInit) => {
+      await delay(10); // Simulate network latency
+      if (url === "/api/health") {
+        return { ok: true, json: async () => ({ status: "healthy", mode: "LIVE_CORE" }) } as any;
+      }
+      if (url === "/api/crowd-decongestion") {
+        return { 
+          ok: true, 
+          json: async () => ({ mode: "LIVE_CORE", data: { status: "NORMAL", updatedSignage: [] } }) 
+        } as any;
+      }
+      if (url === "/api/multilingual-incident") {
+        return { 
+          ok: false, 
+          status: 503,
+          json: async () => ({ error: "TELEMETRY LINK DEGRADED" }) 
+        } as any;
+      }
+      return { ok: true, json: async () => ({}) } as any;
+    });
+
     const setSystemModeMock = (mode: string) => {
       assert.ok(["UNCONFIGURED", "LIVE_CORE", "DEGRADED"].includes(mode));
     };

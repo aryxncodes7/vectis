@@ -59,6 +59,10 @@ npm install
 ```
 
 ### 2. Configuration (Environment Variables)
+
+> [!WARNING]  
+> **Security Critical:** Never commit your `.env` file to version control. Ensure that `.env` is explicitly listed in your `.gitignore` to prevent leaking your Gemini API keys to the public repository.
+
 To enable the **LIVE_CORE** (real Gemini API calls), configure your `.env` file:
 ```bash
 cp .env.example .env

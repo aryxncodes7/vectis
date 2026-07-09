@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getGeminiClient, generateContentWithRetry } from "./_utils/gemini.js";
 import { Type } from "@google/genai";
+import { IncidentAIResponseSchema } from "../src/types.js";
 
 /**
  * Vercel Serverless Endpoint: Multilingual Incident Coordination
@@ -122,7 +123,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const parsedData = JSON.parse(response.text || "{}");
-    return res.status(200).json({ mode: "LIVE_CORE", data: parsedData });
+    const validatedData = IncidentAIResponseSchema.parse(parsedData);
+    return res.status(200).json({ mode: "LIVE_CORE", data: validatedData });
   } catch (error: any) {
     console.warn("Gemini Incident Coordinator Error:", error);
     return res.status(503).json({ error: "TELEMETRY LINK DEGRADED" });
