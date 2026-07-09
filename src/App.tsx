@@ -353,7 +353,7 @@ export default function App() {
   };
 
   return (
-    <div data-theme={theme} className="min-h-screen bg-theme-bg text-theme-text flex flex-col font-mono selection:bg-theme-accent selection:text-theme-panel relative overflow-hidden transition-colors duration-150">
+    <div data-theme={theme} className="h-screen w-screen bg-theme-bg text-theme-text flex flex-col font-mono selection:bg-theme-accent selection:text-theme-panel relative overflow-hidden transition-colors duration-150">
       
       {/* FLOATING PILL NAVBAR */}
       <div className="fixed top-4 left-0 right-0 z-50 mx-auto w-[calc(100%-2rem)] max-w-4xl">
