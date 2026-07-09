@@ -412,13 +412,14 @@ export default function App() {
 
           {/* Connection status */}
           <div className="flex items-center space-x-3">
-            <div className={`hidden sm:flex items-center space-x-1 ${
-              systemMode === "LIVE_CORE" ? "bg-neutral-800/80 hover:bg-neutral-700/80 text-white border-neutral-700/40" : 
-              systemMode === "DEGRADED" ? "bg-theme-accent/20 hover:bg-theme-accent/30 text-theme-accent border-theme-accent/50" : 
-              "bg-neutral-800/80 hover:bg-neutral-700/80 text-theme-muted border-neutral-700/40"
-            } font-bold text-[9px] uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm border cursor-pointer transition-all`} role="status">
-              <span>{systemMode === "LIVE_CORE" ? "Nominal Link ↗" : systemMode === "DEGRADED" ? "Degraded Link ⚠" : "Simulator Mode ◷"}</span>
-            </div>
+            {systemMode !== "LIVE_CORE" && (
+              <div className={`hidden sm:flex items-center space-x-1 ${
+                systemMode === "DEGRADED" ? "bg-theme-accent/20 hover:bg-theme-accent/30 text-theme-accent border-theme-accent/50" : 
+                "bg-neutral-800/80 hover:bg-neutral-700/80 text-theme-muted border-neutral-700/40"
+              } font-bold text-[9px] uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm border cursor-pointer transition-all`} role="status">
+                <span>{systemMode === "DEGRADED" ? "Degraded Link ⚠" : "Simulator Mode ◷"}</span>
+              </div>
+            )}
 
             {/* Light/Dark Mode Toggle Button */}
             <button
