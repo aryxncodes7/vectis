@@ -84,3 +84,57 @@ VECTIS is designed for mission-critical reliability:
 * **Fault Tolerance & Retries:** If the Gemini API experiences transient overload (503 UNAVAILABLE), the system automatically applies an intelligent exponential backoff retry mechanism. If degradation persists, endpoints instantly return an explicit `503 TELEMETRY LINK DEGRADED` error, bubbling the visual state safely to the React frontend rather than silently failing.
 * **Strict AI Schema Validation:** Leveraging Gemini's `responseSchema` configuration, all LLM outputs are guaranteed to return perfectly structured, machine-actionable JSON payloads—no unpredictable conversational prose.
 * **Dynamic Feedback Loops:** The UI prevents race-conditions (e.g., locking ingest triggers during evaluation runs) and reacts dynamically to unacknowledged alarms.
+
+---
+
+## 🏗 Architecture Diagram
+
+```mermaid
+graph TD
+    Client[React Client UI] -->|REST POST| Vercel[Vercel Serverless API /api/*]
+    
+    subgraph Serverless Edge
+    Vercel -->|1. /api/crowd-decongestion| Gemini[Google Gemini 3.5 Flash]
+    Vercel -->|2. /api/multilingual-incident| Gemini
+    Vercel -->|3. /api/predictive-transport| Gemini
+    Vercel -->|4. /api/health| Gemini
+    end
+    
+    Gemini -->|Structured JSON Response| Vercel
+    Vercel -->|UI State Update| Client
+    
+    subgraph Client-Side
+    Client
+    end
+    
+    subgraph AI Core
+    Gemini
+    end
+```
+
+---
+
+## 📂 File Structure
+
+```text
+vectis/
+├── api/
+│   ├── _utils/
+│   │   └── gemini.ts              # Gemini API client with auto-retry backoff
+│   ├── crowd-decongestion.ts      # Endpoint: Gate matrix & signage logic
+│   ├── health.ts                  # Endpoint: Vercel/Gemini status check
+│   ├── multilingual-incident.ts   # Endpoint: Comm log translation & triage
+│   └── predictive-transport.ts    # Endpoint: Egress & EV fleet routing
+├── src/
+│   ├── components/
+│   │   ├── HelperComponents.tsx   # Reusable UI elements
+│   │   └── HelperComponents.test.tsx
+│   ├── App.tsx                    # Main React Application & State Management
+│   ├── index.css                  # Tailwind & Custom Theme Styling
+│   ├── main.tsx                   # React Entry Point
+│   └── types.ts                   # TypeScript Interfaces (Schemas)
+├── .env.example                   # Environment variable template
+├── package.json                   # Dependencies & Scripts
+├── vercel.json                    # Vercel deployment configuration
+└── vite.config.ts                 # Vite bundler configuration
+```
