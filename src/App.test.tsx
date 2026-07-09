@@ -13,7 +13,7 @@ globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);
 
 import App from "./App";
 
-test("VECTIS App Main Orchestrator Integration Suite", async (t) => {
+test("SCOPE App Main Orchestrator Integration Suite", async (t) => {
   await t.test("App component exports and is instantiable", () => {
     assert.strictEqual(typeof App, "function");
     const element = React.createElement(App);

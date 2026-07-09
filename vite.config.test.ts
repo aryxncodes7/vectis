@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 (globalThis as any).__dirname = __dirname;
 
-test("VECTIS Vite Build Configuration Test Suite", async (t) => {
+test("SCOPE Vite Build Configuration Test Suite", async (t) => {
   await t.test("Vite configuration function resolves correctly with standard options", async () => {
     // Dynamically import to ensure globalThis.__dirname is defined first
     const viteConfigModule = await import("./vite.config");

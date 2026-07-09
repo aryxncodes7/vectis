@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert";
 import { CrowdAIResponse, IncidentAIResponse, TransportAIResponse } from "./types";
 
-test("VECTIS Data Structure Interface Contract Validation", async (t) => {
+test("SCOPE Data Structure Interface Contract Validation", async (t) => {
   await t.test("CrowdAIResponse - conforming to structure properties", () => {
     const mockResponse: CrowdAIResponse = {
       status: "WARNING",

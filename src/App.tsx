@@ -362,7 +362,7 @@ export default function App() {
           {/* Logo & Wordmark */}
           <a
             href="/"
-            aria-label="Vectis Home"
+            aria-label="Scope Home"
             className="flex items-center space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
             <Server className="w-5 h-5 text-theme-accent" />
@@ -1042,7 +1042,7 @@ export default function App() {
               <div className="border-b border-theme-border pb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div className="flex items-center space-x-2">
                   <h2 className="text-xs font-bold text-theme-text uppercase tracking-wider">
-                    Section 3 - VECTIS Autonomic Infrastructure Dispatch Target
+                    Section 3 - SCOPE Autonomic Infrastructure Dispatch Target
                   </h2>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -1352,7 +1352,7 @@ export default function App() {
                       1. ARCHITECTURAL OVERVIEW & CORE VALUE PROP
                     </h3>
                     <p className="text-[10px] text-theme-muted uppercase tracking-widest font-mono">
-                      VECTIS: Under-the-Hood Background Operational Automation
+                      SCOPE: Under-the-Hood Background Operational Automation
                     </p>
                   </div>
 
@@ -1361,7 +1361,7 @@ export default function App() {
                       Traditional stadium operations software often runs on fragmented legacy interfaces or delayed communications. These setups fail to address the high-intensity complexity of grand tournament operations: <strong className="text-theme-text">real-time high-throughput logistics and emergency crowd coordination.</strong>
                     </p>
                     <p>
-                      <strong className="text-theme-text">VECTIS</strong> fundamentally re-imagines operational monitoring at the <strong className="text-theme-text">FIFA World Cup 2026</strong>. By acting as an <strong className="text-theme-text">integrated centralized coordination core</strong>, VECTIS ingests complex, high-velocity, heterogeneous data streams:
+                      <strong className="text-theme-text">SCOPE</strong> fundamentally re-imagines operational monitoring at the <strong className="text-theme-text">FIFA World Cup 2026</strong>. By acting as an <strong className="text-theme-text">integrated centralized coordination core</strong>, SCOPE ingests complex, high-velocity, heterogeneous data streams:
                     </p>
 
                     <ul className="list-disc pl-5 space-y-2.5 text-theme-muted py-1">
@@ -1380,11 +1380,11 @@ export default function App() {
                     </ul>
 
                     <p className="bg-theme-bg border-l-2 border-theme-text p-4 rounded-xl text-theme-muted italic">
-                      "The primary innovation of VECTIS is the direct integration of real-time diagnostics into automated state-machine actions, outputting structured schema configurations directly to peripheral APIs."
+                      "The primary innovation of SCOPE is the direct integration of real-time diagnostics into automated state-machine actions, outputting structured schema configurations directly to peripheral APIs."
                     </p>
 
                     <p>
-                      Instead of manual administrative entry, VECTIS outputs deterministic, machine-readable system payloads containing <strong className="text-theme-text">signage text instructions, staff dispatch alerts, and transit routing updates.</strong>
+                      Instead of manual administrative entry, SCOPE outputs deterministic, machine-readable system payloads containing <strong className="text-theme-text">signage text instructions, staff dispatch alerts, and transit routing updates.</strong>
                     </p>
                   </div>
                 </div>
@@ -1411,7 +1411,7 @@ export default function App() {
                         <h4 className="font-bold uppercase tracking-wide text-xs">A. Dynamic Crowd De-congestion & Smart Routing</h4>
                       </div>
                       <p>
-                        During entry peaks (90-30 minutes pre-game), ticket ingress gates inevitably bottleneck. When IoT pressure sensors or optical telemetry feeds register gate loads exceeding 85%, VECTIS evaluates the surrounding topology and identifies alternative peripheral gates.
+                        During entry peaks (90-30 minutes pre-game), ticket ingress gates inevitably bottleneck. When IoT pressure sensors or optical telemetry feeds register gate loads exceeding 85%, SCOPE evaluates the surrounding topology and identifies alternative peripheral gates.
                       </p>
                       <p className="text-xs text-theme-muted">
                         <strong className="text-theme-text">Output Control Action:</strong> Sends JSON to updated physical digital signage (e.g. redirecting Gate A traffic to Gate C), while pushing live re-routing vectors to static fan app maps to evenly spread entry velocity.
@@ -1425,7 +1425,7 @@ export default function App() {
                         <h4 className="font-bold uppercase tracking-wide text-xs">B. Multilingual Incident Coordination</h4>
                       </div>
                       <p>
-                        Stewards, emergency responders, and police communicate in native languages (French, Spanish, Portuguese). Rather than forcing staff to manually translate, VECTIS instantly ingests and normalizes these disparate communication inputs.
+                        Stewards, emergency responders, and police communicate in native languages (French, Spanish, Portuguese). Rather than forcing staff to manually translate, SCOPE instantly ingests and normalizes these disparate communication inputs.
                       </p>
                       <p className="text-xs text-theme-muted">
                         <strong className="text-theme-text">Output Control Action:</strong> Translates, normalizes, and synthesizes reports into a unified, prioritized Situational Report (SitRep). It automatically matches reports against official Standard Operating Procedures (SOPs) to recommend immediate, actionable triage tasks to organizers.
@@ -1533,7 +1533,7 @@ export default function App() {
                       <h4 className="font-bold text-theme-text uppercase text-xs">Critical Tech Stack Choices:</h4>
                       <ul className="list-disc pl-5 space-y-2">
                         <li>
-                          <strong className="text-theme-text">Core Dispatch Processors:</strong> <code className="bg-theme-bg px-1.5 py-0.5 rounded-xl border border-theme-border text-theme-text">VECTIS Node Engine</code> serves as the central data consolidation and pattern-matching core due to its sub-second telemetry processing latency and flawless support for complex structured JSON schemas.
+                          <strong className="text-theme-text">Core Dispatch Processors:</strong> <code className="bg-theme-bg px-1.5 py-0.5 rounded-xl border border-theme-border text-theme-text">SCOPE Node Engine</code> serves as the central data consolidation and pattern-matching core due to its sub-second telemetry processing latency and flawless support for complex structured JSON schemas.
                         </li>
                         <li>
                           <strong className="text-theme-text">Structured Schema Enforcement:</strong> We leverage strict schema enforcement. Rather than standard text generation, the system's output is structurally locked to compile exactly with our operational database definitions.
@@ -1637,7 +1637,7 @@ export default function App() {
 
                   <div className="space-y-4 text-xs text-theme-muted leading-relaxed font-mono uppercase">
                     <p>
-                      Unlike basic informational interfaces, VECTIS is optimized for mission-critical tournament operations due to these core engineering dimensions:
+                      Unlike basic informational interfaces, SCOPE is optimized for mission-critical tournament operations due to these core engineering dimensions:
                     </p>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
@@ -1684,7 +1684,7 @@ export default function App() {
       <footer className="border-t border-theme-border/40 bg-theme-panel/50 backdrop-blur-md px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-theme-muted">
         {/* Left: Project name */}
         <div className="font-bold text-theme-text uppercase tracking-wider">
-          VECTIS
+          SCOPE
         </div>
 
         {/* Middle: 3 words about it */}

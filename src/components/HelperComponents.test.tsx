@@ -13,7 +13,7 @@ globalThis.cancelAnimationFrame = (id: number) => clearTimeout(id);
 
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from "./HelperComponents";
 
-test("VECTIS Helper Component Interface Validation Suite", async (t) => {
+test("SCOPE Helper Component Interface Validation Suite", async (t) => {
   await t.test("AnimatedNumber - component exports and initializes", () => {
     assert.strictEqual(typeof AnimatedNumber, "function");
     const element = React.createElement(AnimatedNumber, { value: 100, duration: 200 });

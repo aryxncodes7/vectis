@@ -69,7 +69,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const prompt = `
-      You are the silent background GenAI intelligence layer "VECTIS" for the FIFA World Cup 2026.
+      You are the silent background GenAI intelligence layer "SCOPE" for the FIFA World Cup 2026.
       Injest the following live stadium crowd IoT data streams and generate a deterministic structured JSON routing and infrastructure dispatch package.
 
       STADIUM GATE IoT LOAD DATA:

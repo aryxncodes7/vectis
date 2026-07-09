@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-test("VECTIS Bootstrap Entry Verification Suite", async (t) => {
+test("SCOPE Bootstrap Entry Verification Suite", async (t) => {
   await t.test("main.tsx structure, styles and React strict mounting checks", () => {
     const mainPath = path.resolve(__dirname, "main.tsx");
     assert.ok(fs.existsSync(mainPath), "main.tsx file must exist");
