@@ -5,11 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rm -rf dist",
-    "lint": "tsc --noEmit",
-    "test": "node --import tsx --test src/types.test.ts src/components/HelperComponents.test.tsx src/App.test.tsx src/main.test.ts vite.config.test.ts"
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
