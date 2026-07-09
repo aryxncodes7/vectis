@@ -1362,7 +1362,7 @@ export default function App() {
               </div>
 
               {/* DOCUMENT CONTENT PANEL (COL 9) */}
-              <div className="md:col-span-9 bg-theme-panel border border-theme-border rounded-xl p-8 space-y-6 overflow-y-auto max-h-[calc(100vh-200px)]">
+              <div className="md:col-span-9 bg-theme-panel border border-theme-border rounded-xl p-8 space-y-6">
                 
                 {/* SECTION 1: ARCHITECTURAL OVERVIEW & CORE VALUE PROP */}
                 {activeBlueprintSection === "overview" && (
