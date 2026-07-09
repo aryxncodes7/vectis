@@ -5,15 +5,20 @@ import { motion } from "motion/react";
 export function AnimatedNumber({ value, duration = 600, formatter }: { value: number; duration?: number; formatter?: (val: number) => string }) {
   const [displayVal, setDisplayVal] = useState(value);
   const prevValRef = useRef(value);
+  const activeTargetRef = useRef(value);
 
   useEffect(() => {
     let startTimestamp: number | null = null;
     const startVal = prevValRef.current;
     const endVal = value;
+    activeTargetRef.current = endVal;
+    
     if (startVal === endVal) return;
     
     let animationFrameId: number;
     const step = (timestamp: number) => {
+      if (activeTargetRef.current !== endVal) return; // Prevent race conditions
+      
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
       const ease = progress * (2 - progress); /* easeOutQuad */
@@ -93,9 +98,16 @@ interface MagneticButtonProps {
 export function MagneticButton({ children, className = "", onClick, disabled, type = "button" }: MagneticButtonProps) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (!buttonRef.current) return;
+    if (!buttonRef.current || !isMounted.current) return;
     const { clientX, clientY } = e;
     const { left, top, width, height } = buttonRef.current.getBoundingClientRect();
     const centerX = left + width / 2;
@@ -106,7 +118,9 @@ export function MagneticButton({ children, className = "", onClick, disabled, ty
   };
 
   const handleMouseLeave = () => {
-    setPosition({ x: 0, y: 0 });
+    if (isMounted.current) {
+      setPosition({ x: 0, y: 0 });
+    }
   };
 
   return (

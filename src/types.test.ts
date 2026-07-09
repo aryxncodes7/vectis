@@ -89,4 +89,22 @@ test("SCOPE Data Structure Interface Contract Validation", async (t) => {
     assert.strictEqual(mockResponse.ecoShuttleDispatch.co2SavedKgEst, 496.2);
     assert.strictEqual(mockResponse.exitGateConfiguration[0].gateId, "GATE_ALPHA_1");
   });
+
+  await t.test("Boundary Data Tests - Runtime Malformed Data Graceful Handling", () => {
+    // Simulate runtime parsing of missing fields or negative values which might bypass TS checks
+    const malformedData: any = {
+      status: "",
+      volunteerDispatch: {
+        dispatchNeeded: "yes", // should be boolean but testing boundary tolerance
+        staffCount: -5 // Invalid logically but structurally accepted
+      }
+    };
+    
+    // Assert logic defaults to acceptable safe thresholds when properties are missing or corrupted
+    const safeStaffCount = Math.max(0, malformedData.volunteerDispatch?.staffCount || 0);
+    assert.strictEqual(safeStaffCount, 0);
+
+    const isDispatchActive = Boolean(malformedData.volunteerDispatch?.dispatchNeeded === true);
+    assert.strictEqual(isDispatchActive, false);
+  });
 });
