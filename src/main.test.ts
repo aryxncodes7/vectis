@@ -31,6 +31,7 @@ test("SCOPE Bootstrap Entry Verification Suite", async (t) => {
     
     try {
       // 3. Import the clean main.tsx, which executes the createRoot logic
+      // @ts-ignore - The file is generated dynamically at runtime to strip CSS for testing
       await import("./main_test_temp.tsx");
       
       // 4. Assert that the DOM was successfully modified by React
