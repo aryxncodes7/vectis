@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, MouseEvent } from "react";
+import React, { useState, useEffect, useRef, MouseEvent, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
   ShieldAlert,
@@ -55,7 +55,7 @@ export default function App() {
     GATE_K: [20, 20, 20, 20, 20, 20],
   });
 
-  const generateSparklinePath = (gateId: string, currentVal: number) => {
+  const generateSparklinePath = useCallback((gateId: string, currentVal: number) => {
     const baseHistory = gateHistory[gateId] || [40, 40, 40, 40, 40, 40];
     const history = [...baseHistory, currentVal];
     const points = history.map((val, idx) => {
@@ -64,7 +64,7 @@ export default function App() {
       return `${x},${y}`;
     });
     return `M ${points.join(" L ")}`;
-  };
+  }, [gateHistory]);
 
   const [gates, setGates] = useState<GateData[]>([
     { id: "GATE_A", name: "Gate A (Metro Plaza)", loadPercentage: 45, queueLength: 120, status: "NORMAL" },

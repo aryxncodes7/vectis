@@ -2,6 +2,16 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getGeminiClient, generateContentWithRetry } from "./_utils/gemini.js";
 import { Type } from "@google/genai";
 
+/**
+ * Vercel Serverless Endpoint: Predictive Transport Dispatch
+ * 
+ * Aligns transit logistics with match-day reality. Analyzes live match scores 
+ * and progression to predict egress bottlenecks and allocate eco-shuttles.
+ * 
+ * @param {VercelRequest} req - The incoming HTTP request. `req.body.matchState` and `req.body.transitGrid` are required.
+ * @param {VercelResponse} res - The outgoing HTTP response containing the AI JSON output.
+ * @returns {Promise<void>}
+ */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });

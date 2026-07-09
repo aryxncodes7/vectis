@@ -2,6 +2,16 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getGeminiClient, generateContentWithRetry } from "./_utils/gemini.js";
 import { Type } from "@google/genai";
 
+/**
+ * Vercel Serverless Endpoint: Multilingual Incident Coordination
+ * 
+ * Ingests raw heterogenous multilingual radio communication logs and
+ * returns a unified English Situational Report (SitRep) with standard operating procedures.
+ * 
+ * @param {VercelRequest} req - The incoming HTTP request. `req.body.rawReports` is required.
+ * @param {VercelResponse} res - The outgoing HTTP response containing the AI JSON output.
+ * @returns {Promise<void>}
+ */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
