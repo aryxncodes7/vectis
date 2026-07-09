@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert";
-import { CrowdAIResponse, IncidentAIResponse, TransportAIResponse } from "./types";
+import { CrowdAIResponse, IncidentAIResponse, TransportAIResponse, CrowdAIResponseSchema } from "./types";
 
 test("SCOPE Data Structure Interface Contract Validation", async (t) => {
   await t.test("CrowdAIResponse - conforming to structure properties", () => {
@@ -91,20 +91,28 @@ test("SCOPE Data Structure Interface Contract Validation", async (t) => {
   });
 
   await t.test("Boundary Data Tests - Runtime Malformed Data Graceful Handling", () => {
-    // Simulate runtime parsing of missing fields or negative values which might bypass TS checks
-    const malformedData: any = {
-      status: "",
+    // We now use strict Zod validation instead of implicit coercion to prevent silent failures
+    const malformedData = {
+      status: "INVALID_STATUS", // Not in the enum
+      analysis: "Should fail",
+      updatedSignage: [],
       volunteerDispatch: {
-        dispatchNeeded: "yes", // should be boolean but testing boundary tolerance
-        staffCount: -5 // Invalid logically but structurally accepted
-      }
+        dispatchNeeded: "yes", // Should be boolean
+        targetZone: "North Plaza",
+        staffCount: -5,
+        actionInstructions: "Do something"
+      },
+      fanAppRoutings: []
     };
     
-    // Assert logic defaults to acceptable safe thresholds when properties are missing or corrupted
-    const safeStaffCount = Math.max(0, malformedData.volunteerDispatch?.staffCount || 0);
-    assert.strictEqual(safeStaffCount, 0);
-
-    const isDispatchActive = Boolean(malformedData.volunteerDispatch?.dispatchNeeded === true);
-    assert.strictEqual(isDispatchActive, false);
+    assert.throws(
+      () => {
+        CrowdAIResponseSchema.parse(malformedData);
+      },
+      (err: any) => {
+        return err.name === "ZodError";
+      },
+      "Zod Schema should strictly reject malformed boundary payloads"
+    );
   });
 });
