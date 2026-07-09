@@ -18,3 +18,24 @@ export function getGeminiClient() {
   }
   return aiClient;
 }
+
+export async function generateContentWithRetry(client: any, options: any, maxRetries = 2) {
+  let attempts = 0;
+  while (attempts <= maxRetries) {
+    try {
+      return await client.models.generateContent(options);
+    } catch (error: any) {
+      const errString = error?.message || String(error);
+      const isUnavailable = error?.status === 503 || errString.includes("503") || errString.includes("UNAVAILABLE");
+      
+      if (isUnavailable && attempts < maxRetries) {
+        attempts++;
+        const delayMs = attempts === 1 ? 1500 : 3000;
+        console.warn(`Gemini API 503 UNAVAILABLE. Retrying attempt ${attempts}/${maxRetries} in ${delayMs}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delayMs));
+      } else {
+        throw error;
+      }
+    }
+  }
+}

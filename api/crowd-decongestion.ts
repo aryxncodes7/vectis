@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getGeminiClient } from "./_utils/gemini.js";
+import { getGeminiClient, generateContentWithRetry } from "./_utils/gemini.js";
 import { Type } from "@google/genai";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -59,7 +59,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const prompt = `
-      You are the silent background GenAI intelligence layer "StadiumOps-Nexus" for the FIFA World Cup 2026.
+      You are the silent background GenAI intelligence layer "VECTIS" for the FIFA World Cup 2026.
       Injest the following live stadium crowd IoT data streams and generate a deterministic structured JSON routing and infrastructure dispatch package.
 
       STADIUM GATE IoT LOAD DATA:
@@ -77,7 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       Output strictly JSON fitting the requested schema.
     `;
 
-    const response = await client.models.generateContent({
+    const response = await generateContentWithRetry(client, {
       model: "gemini-3.5-flash",
       contents: prompt,
       config: {
