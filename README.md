@@ -4,7 +4,7 @@
 
 [![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://reactjs.org/)
 [![Vite](https://img.shields.io/badge/Vite-6.2-purple.svg)](https://vitejs.dev/)
-[![Express](https://img.shields.io/badge/Express-4.21-lightgrey.svg)](https://expressjs.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Serverless-black.svg)](https://vercel.com/)
 [![Gemini](https://img.shields.io/badge/Google%20GenAI-2.4-orange.svg)](https://aistudio.google.com/)
 </div>
 
@@ -42,7 +42,7 @@ VECTIS aligns transit logistics with match-day reality. By analyzing live match 
 ## 🛠 Tech Stack
 
 * **Frontend:** React 19, TypeScript, Tailwind CSS v4, Framer Motion, Lucide React.
-* **Backend:** Express.js, Node.js (via `tsx`).
+* **Backend:** Vercel Serverless Functions (`/api/*`).
 * **AI Core:** `@google/genai` (Gemini SDK).
 * **Build Tooling:** Vite, ESBuild.
 
@@ -70,9 +70,9 @@ GEMINI_API_KEY="your_actual_api_key_here"
 *Note: If no valid API key is provided, VECTIS gracefully defaults to **SIMULATION_FALLBACK** mode, using high-fidelity mock data to maintain full UI functionality without crashing.*
 
 ### 3. Start the Server
-Run the unified development server (hosts both Express API and Vite frontend):
+Run the Vercel development server (hosts both the Serverless API routes and Vite frontend):
 ```bash
-npm run dev
+npx vercel dev
 ```
 Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -81,6 +81,6 @@ Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
 ## 🛡️ Architecture & Robustness
 
 VECTIS is designed for mission-critical reliability:
-* **Fault Tolerance:** If the Gemini API experiences timeouts or degradation, endpoints instantly return an explicit `503 TELEMETRY LINK DEGRADED` error, bubbling the visual state safely to the React frontend rather than silently failing.
+* **Fault Tolerance & Retries:** If the Gemini API experiences transient overload (503 UNAVAILABLE), the system automatically applies an intelligent exponential backoff retry mechanism. If degradation persists, endpoints instantly return an explicit `503 TELEMETRY LINK DEGRADED` error, bubbling the visual state safely to the React frontend rather than silently failing.
 * **Strict AI Schema Validation:** Leveraging Gemini's `responseSchema` configuration, all LLM outputs are guaranteed to return perfectly structured, machine-actionable JSON payloads—no unpredictable conversational prose.
 * **Dynamic Feedback Loops:** The UI prevents race-conditions (e.g., locking ingest triggers during evaluation runs) and reacts dynamically to unacknowledged alarms.
