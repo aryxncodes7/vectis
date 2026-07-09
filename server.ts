@@ -52,10 +52,21 @@ app.use((req, res, next) => {
 // API route to check system status
 app.get("/api/health", (req, res) => {
   const client = getGeminiClient();
+  let mode = "UNCONFIGURED";
+  if (client) {
+    if (lastCallStatus === "error") {
+      mode = "DEGRADED";
+    } else {
+      mode = "LIVE_CORE";
+    }
+  }
+
   res.json({
     status: "healthy",
-    mode: client ? "LIVE_CORE" : "SIMULATION_FALLBACK",
+    mode: mode,
     timestamp: new Date().toISOString(),
+    lastCallStatus,
+    lastCallTimestamp
   });
 });
 
@@ -132,7 +143,7 @@ app.post("/api/crowd-decongestion", async (req, res) => {
     `;
 
     const response = await client.models.generateContent({
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         systemInstruction: "You are a centralized stadium logistics optimization engine. You output exclusively structured system control payloads. No chat-like conversational prose.",
@@ -183,9 +194,13 @@ app.post("/api/crowd-decongestion", async (req, res) => {
     });
 
     const parsedData = JSON.parse(response.text || "{}");
+    lastCallStatus = "success";
+    lastCallTimestamp = new Date().toISOString();
     res.json({ mode: "LIVE_CORE", data: parsedData });
   } catch (error: any) {
     console.warn("Gemini Crowd Ingestion Error:", error);
+    lastCallStatus = "error";
+    lastCallTimestamp = new Date().toISOString();
     res.status(503).json({ error: "TELEMETRY LINK DEGRADED" });
   }
 });
@@ -242,7 +257,7 @@ app.post("/api/multilingual-incident", async (req, res) => {
     `;
 
     const response = await client.models.generateContent({
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         systemInstruction: "You are a centralized incident coordinator. Output purely structured system command JSON payloads.",
@@ -297,9 +312,13 @@ app.post("/api/multilingual-incident", async (req, res) => {
     });
 
     const parsedData = JSON.parse(response.text || "{}");
+    lastCallStatus = "success";
+    lastCallTimestamp = new Date().toISOString();
     res.json({ mode: "LIVE_CORE", data: parsedData });
   } catch (error: any) {
     console.warn("Gemini Incident Coordinator Error:", error);
+    lastCallStatus = "error";
+    lastCallTimestamp = new Date().toISOString();
     res.status(503).json({ error: "TELEMETRY LINK DEGRADED" });
   }
 });
@@ -362,7 +381,7 @@ app.post("/api/predictive-transport", async (req, res) => {
     `;
 
     const response = await client.models.generateContent({
-      model: "gemini-3.5-flash",
+      model: "gemini-1.5-flash",
       contents: prompt,
       config: {
         systemInstruction: "You are a centralized transport planning optimization engine. Output structured system JSON.",
@@ -419,9 +438,13 @@ app.post("/api/predictive-transport", async (req, res) => {
     });
 
     const parsedData = JSON.parse(response.text || "{}");
+    lastCallStatus = "success";
+    lastCallTimestamp = new Date().toISOString();
     res.json({ mode: "LIVE_CORE", data: parsedData });
   } catch (error: any) {
     console.warn("Gemini Transport Planner Error:", error);
+    lastCallStatus = "error";
+    lastCallTimestamp = new Date().toISOString();
     res.status(503).json({ error: "TELEMETRY LINK DEGRADED" });
   }
 });

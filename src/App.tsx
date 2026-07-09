@@ -39,7 +39,7 @@ export default function App() {
 
   const [activeSimSegment, setActiveSimSegment] = useState<"crowd" | "incident" | "transport">("crowd");
 
-  const [isLiveMode, setIsLiveMode] = useState<boolean>(false);
+  const [systemMode, setSystemMode] = useState<"UNCONFIGURED" | "LIVE_CORE" | "DEGRADED">("UNCONFIGURED");
   const [isSystemEvaluating, setIsSystemEvaluating] = useState<boolean>(false);
   const [systemLogs, setSystemLogs] = useState<string[]>([]);
   const [lastEvaluationTime, setLastEvaluationTime] = useState<string>("Never");
@@ -146,11 +146,11 @@ export default function App() {
       try {
         const res = await fetch("/api/health");
         const data = await res.json();
-        setIsLiveMode(data.mode === "LIVE_CORE");
+        setSystemMode(data.mode);
         addLog(`System connected. Mode: ${data.mode}. Polling localized stadium hardware matrix... Network status active.`);
       } catch (err) {
         console.warn("Backend health check failed. Running in Simulator Mode.", err);
-        setIsLiveMode(false);
+        setSystemMode("UNCONFIGURED");
         addLog("System offline. Operating in high-fidelity standalone simulator mode.");
       }
     };
@@ -182,7 +182,7 @@ export default function App() {
       }
       const resData = await response.json();
       setCrowdAIResponse(resData.data);
-      setIsLiveMode(resData.mode === "LIVE_CORE");
+      setSystemMode(resData.mode);
       setLastEvaluationTime(new Date().toLocaleTimeString());
 
       /* Dynamically apply signage updates */
@@ -228,6 +228,7 @@ export default function App() {
       console.error(err);
       addLog(`Hardware error executing Crowd De-congestion telemetry matrix: ${err.message}`);
       setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
@@ -250,13 +251,14 @@ export default function App() {
       }
       const resData = await response.json();
       setIncidentAIResponse(resData.data);
-      setIsLiveMode(resData.mode === "LIVE_CORE");
+      setSystemMode(resData.mode);
       setLastEvaluationTime(new Date().toLocaleTimeString());
       addLog(`Incident correlation complete. Unified SitRep compiled with priority: ${resData.data.severity}. Procedures matched to physical checklist matrices.`);
     } catch (err: any) {
       console.error(err);
       addLog(`Error executing telemetry mapping on communication stream: ${err.message}`);
       setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
@@ -284,13 +286,14 @@ export default function App() {
       }
       const resData = await response.json();
       setTransportAIResponse(resData.data);
-      setIsLiveMode(resData.mode === "LIVE_CORE");
+      setSystemMode(resData.mode);
       setLastEvaluationTime(new Date().toLocaleTimeString());
       addLog(`Transit fleet dispatch recalculated. Projected egress peak: ${resData.data.egressPeakTimeUtc}. Allocating ${resData.data.ecoShuttleDispatch.fleetSizeToDeploy} transit hardware nodes.`);
     } catch (err: any) {
       console.error(err);
       addLog(`Error during fleet optimization matrix execution: ${err.message}`);
       setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
@@ -409,8 +412,12 @@ export default function App() {
 
           {/* Connection status */}
           <div className="flex items-center space-x-3">
-            <div className="hidden sm:flex items-center space-x-1 bg-neutral-800/80 hover:bg-neutral-700/80 text-white font-bold text-[9px] uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm border border-neutral-700/40 cursor-pointer transition-all" role="status">
-              <span>Nominal Link ↗</span>
+            <div className={`hidden sm:flex items-center space-x-1 ${
+              systemMode === "LIVE_CORE" ? "bg-neutral-800/80 hover:bg-neutral-700/80 text-white border-neutral-700/40" : 
+              systemMode === "DEGRADED" ? "bg-theme-accent/20 hover:bg-theme-accent/30 text-theme-accent border-theme-accent/50" : 
+              "bg-neutral-800/80 hover:bg-neutral-700/80 text-theme-muted border-neutral-700/40"
+            } font-bold text-[9px] uppercase tracking-wider px-3 py-1.5 rounded-full shadow-sm border cursor-pointer transition-all`} role="status">
+              <span>{systemMode === "LIVE_CORE" ? "Nominal Link ↗" : systemMode === "DEGRADED" ? "Degraded Link ⚠" : "Simulator Mode ◷"}</span>
             </div>
 
             {/* Light/Dark Mode Toggle Button */}
