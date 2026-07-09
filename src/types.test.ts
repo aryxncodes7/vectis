@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert";
-import { CrowdAIResponse, IncidentAIResponse, TransportAIResponse, CrowdAIResponseSchema } from "./types";
+import { CrowdAIResponse, IncidentAIResponse, TransportAIResponse, CrowdAIResponseSchema, IncidentAIResponseSchema, TransportAIResponseSchema } from "./types";
 
 test("SCOPE Data Structure Interface Contract Validation", async (t) => {
   await t.test("CrowdAIResponse - conforming to structure properties", () => {
@@ -105,14 +105,50 @@ test("SCOPE Data Structure Interface Contract Validation", async (t) => {
       fanAppRoutings: []
     };
     
+    assert.throws(() => CrowdAIResponseSchema.parse(malformedData), (err: any) => err.name === "ZodError", "Crowd schema should reject");
+  });
+
+  await t.test("Boundary Data Tests - Runtime Malformed Incident Payload Rejection", () => {
+    const malformedIncidentData = {
+      status: "RESOLVED",
+      threatLevel: 999, // Should be HIGH, MEDIUM, LOW
+      actionInstructions: "Do this",
+      personnelDispatch: [{ unitId: "U1" }] // Missing required fields
+    };
+    
     assert.throws(
       () => {
-        CrowdAIResponseSchema.parse(malformedData);
+        IncidentAIResponseSchema.parse(malformedIncidentData);
       },
       (err: any) => {
         return err.name === "ZodError";
       },
-      "Zod Schema should strictly reject malformed boundary payloads"
+      "Incident schema should strictly reject invalid enums and missing properties"
+    );
+  });
+
+  await t.test("Boundary Data Tests - Runtime Malformed Transport Payload Rejection", () => {
+    const malformedTransportData = {
+      status: "ACTIVE", // Should be NORMAL, REROUTED, DELAYED
+      updatedRoutes: [
+        { routeId: "R1", status: "ok" } // Missing delayMinutes
+      ],
+      publicAddressSignageScript: "Testing",
+      matchTimelineStatus: "POST_MATCH", // Should be PRE_MATCH, REGULAR_PLAY, POST_MATCH
+      ecoShuttleDispatch: {
+        activeShuttles: -1, // Negative values should technically fail, but we'll test structural rejection
+        co2SavedKgEst: "100" // Should be a number
+      }
+    };
+
+    assert.throws(
+      () => {
+        TransportAIResponseSchema.parse(malformedTransportData);
+      },
+      (err: any) => {
+        return err.name === "ZodError";
+      },
+      "Transport schema should strictly reject incorrect types and missing properties"
     );
   });
 });
