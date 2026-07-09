@@ -1,5 +1,5 @@
-# VECTIS
-**Venue Event Control & Telemetry Infrastructure System**  
+# SCOPE
+**Stadium Crowd Optimization & Predictive Engine**  
 *Autonomous Event Routing & Real-Time Decision Support for the FIFA World Cup 2026*
 
 [![React](https://img.shields.io/badge/React-19.0-blue.svg)](https://reactjs.org/)
@@ -12,9 +12,9 @@
 
 ## 📖 Overview
 
-Traditional stadium operations rely on fragmented legacy interfaces and delayed communication. **VECTIS** fundamentally reimagines operational monitoring for extreme-scale events like the FIFA World Cup 2026. 
+Traditional stadium operations rely on fragmented legacy interfaces and delayed communication. **SCOPE** fundamentally reimagines operational monitoring for extreme-scale events like the FIFA World Cup 2026. 
 
-By acting as a centralized coordination core, VECTIS ingests high-velocity, heterogeneous data streams (IoT sensors, visual telemetry, multilingual field reports, transit delays) and uses **Google Gemini 3.5 Flash** to output deterministic, machine-readable JSON payloads containing signage instructions, staff dispatch alerts, and transit routing updates.
+By acting as a centralized coordination core, SCOPE ingests high-velocity, heterogeneous data streams (IoT sensors, visual telemetry, multilingual field reports, transit delays) and uses **Google Gemini 3.5 Flash** to output deterministic, machine-readable JSON payloads containing signage instructions, staff dispatch alerts, and transit routing updates.
 
 ---
 

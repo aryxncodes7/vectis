@@ -366,7 +366,7 @@ export default function App() {
             className="flex items-center space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
             <Server className="w-5 h-5 text-theme-accent" />
-            <span className="text-base font-black tracking-widest uppercase text-white leading-none">VECTIS</span>
+            <span className="text-base font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
           </a>
 
           {/* Thin Divider */}
