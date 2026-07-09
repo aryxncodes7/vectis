@@ -365,8 +365,8 @@ export default function App() {
             aria-label="Scope Home"
             className="flex items-center space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
-            <img src="/favicon.png" alt="SCOPE Logo" className="w-6 h-6 object-contain mix-blend-screen invert brightness-200" />
-            <span className="text-base font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
+            <img src="/favicon.png" alt="SCOPE Logo" className="w-9 h-9 object-contain mix-blend-screen invert brightness-200" />
+            <span className="text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
           </a>
 
           {/* Thin Divider */}
