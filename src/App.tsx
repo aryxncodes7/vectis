@@ -360,17 +360,14 @@ export default function App() {
         <header className="rounded-full bg-black/95 backdrop-blur-md text-white px-7 py-3.5 flex items-center justify-between shadow-2xl shadow-black/50 border border-neutral-800/80 transition-all duration-150">
 
           {/* Logo & Wordmark */}
-          <button
-            onClick={() => {
-              setActiveWorkspaceTab("simulation");
-              setActiveSimSegment("crowd");
-            }}
+          <a
+            href="/"
             aria-label="Vectis Home"
             className="flex items-center space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
             <Server className="w-5 h-5 text-theme-accent" />
             <span className="text-base font-black tracking-widest uppercase text-white leading-none">VECTIS</span>
-          </button>
+          </a>
 
           {/* Thin Divider */}
           <div className="hidden md:block w-px h-6 bg-neutral-800/60" />
