@@ -8,8 +8,11 @@ import { fileURLToPath } from 'url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(() => {
+  // Use '/scope/' for GitHub Pages (which uses GitHub Actions), and '/' for Vercel and local dev.
+  const basePath = process.env.GITHUB_ACTIONS ? '/scope/' : '/';
+
   return {
-    base: '/scope/',
+    base: basePath,
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
