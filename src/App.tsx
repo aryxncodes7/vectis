@@ -1,32 +1,29 @@
-import React, { useState, useEffect, useRef, MouseEvent, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import {
-  ShieldAlert,
   Server,
   Activity,
-  Cpu,
   RefreshCw,
-  Clock,
   BookOpen,
-  MapPin,
-  TrendingUp,
-  FileCode,
   Users,
   MessageSquare,
   Truck,
-  ArrowRight,
-  AlertTriangle,
-  CheckCircle,
-  HelpCircle,
-  Eye,
-  Settings,
-  Flame,
   Check,
-  Send,
-  Zap,
   Sun,
   Moon,
 } from "lucide-react";
+
+export const SYSTEM_MODE = {
+  UNCONFIGURED: "UNCONFIGURED" as const,
+  LIVE_CORE: "LIVE_CORE" as const,
+  DEGRADED: "DEGRADED" as const,
+};
+
+export const ALERT_STATUS = {
+  NORMAL: "NORMAL" as const,
+  WARNING: "WARNING" as const,
+  CRITICAL: "CRITICAL" as const,
+};
 
 import { GateData, Signage, MultilingualReport, CrowdAIResponse, IncidentAIResponse, TransportAIResponse } from "./types";
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from "./components/HelperComponents";
