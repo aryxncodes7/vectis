@@ -1,0 +1,16 @@
+{
+  "name": "SCOPE - Venue Event Control & Telemetry Infrastructure System",
+  "short_name": "SCOPE",
+  "description": "Autonomous Event Routing & Real-Time Decision Support for FIFA World Cup 2026",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#e2453c",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

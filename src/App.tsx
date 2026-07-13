@@ -369,7 +369,7 @@ export default function App() {
             className="flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
             <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="SCOPE Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain mix-blend-screen invert brightness-200" />
-            <span className="hidden sm:block text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
+            <span className="text-sm sm:text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
           </a>
 
           {/* Thin Divider */}
@@ -382,26 +382,26 @@ export default function App() {
               role="tab"
               aria-selected={activeWorkspaceTab === "simulation"}
               aria-label="Live Simulator Tab"
-              className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "simulation"
+              className={`px-2 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 whitespace-nowrap ${activeWorkspaceTab === "simulation"
                   ? "bg-neutral-800/80 text-white font-extrabold border border-neutral-700/50"
                   : "text-neutral-400 hover:text-white"
                 }`}
             >
               <Activity className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline">LIVE SIMULATOR</span>
+              <span>LIVE SIMULATOR</span>
             </button>
             <button
               onClick={() => setActiveWorkspaceTab("blueprint")}
               role="tab"
               aria-selected={activeWorkspaceTab === "blueprint"}
               aria-label="Blueprint Reference Tab"
-              className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "blueprint"
+              className={`px-2 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[8px] sm:text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 whitespace-nowrap ${activeWorkspaceTab === "blueprint"
                   ? "bg-neutral-800/80 text-white font-extrabold border border-neutral-700/50"
                   : "text-neutral-400 hover:text-white"
                 }`}
             >
               <BookOpen className="w-3.5 h-3.5 shrink-0" />
-              <span className="hidden sm:inline">BLUEPRINT</span>
+              <span>BLUEPRINT</span>
             </button>
           </div>
 

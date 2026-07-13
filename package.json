@@ -1,7 +1,8 @@
 {
-  "name": "react-example",
+  "name": "scope",
+  "description": "Venue Event Control & Telemetry Infrastructure System",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
