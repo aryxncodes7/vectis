@@ -1,9 +1,10 @@
 import React from 'react';
 import { AnimatedNumber, GlowPanel, ScrollReveal } from './HelperComponents';
+import { TelemetryGridProps } from '../types';
 
 export const TelemetryGrid = ({
   avgGateInflow, gates, acknowledgedAlarms, activeAlarmsCount, ingressQueueAccumulation, flowDelayMetric, transportAIResponse, activeSimSegment, setActiveSimSegment, lastEvaluationTime
-}: any) => {
+}: TelemetryGridProps) => {
   return (<>
             <ScrollReveal delay={0.05} className="px-6 py-6 space-y-6 border-b border-theme-border bg-theme-bg">
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">

@@ -1,10 +1,11 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import { GlowPanel, ScrollReveal, MagneticButton } from './HelperComponents';
+import { CommunicationLogProps } from '../types';
 
 export const CommunicationLog = ({
   incidentReports, removeIncidentReport, handleAddCustomReport, newReporterName, setNewReporterName, newReporterLang, setNewReporterLang, newReportText, setNewReportText, isSystemEvaluating, runIncidentEvaluation
-}: any) => {
+}: CommunicationLogProps) => {
   return (<>
                 <div className="space-y-6">
                   <ScrollReveal delay={0}>
@@ -22,6 +23,7 @@ export const CommunicationLog = ({
                         {incidentReports.map((report) => (
                           <div key={report.id} className="bg-theme-bg border border-theme-border p-2.5 rounded-xl relative group">
                             <button
+                              aria-label="Delete Report"
                               onClick={() => removeIncidentReport(report.id)}
                               className="absolute top-2 right-2 text-theme-muted hover:text-theme-accent text-xs transition-colors cursor-pointer font-bold"
                               title="Delete Report"
@@ -56,6 +58,7 @@ export const CommunicationLog = ({
                             <label className="text-[9px] text-theme-muted font-mono uppercase">STAFF NAME</label>
                             <input
                               type="text"
+                              aria-label="Staff Name"
                               placeholder="Marc Girard"
                               value={newReporterName}
                               onChange={(e) => setNewReporterName(e.target.value)}
@@ -66,6 +69,7 @@ export const CommunicationLog = ({
                           <div className="space-y-1">
                             <label className="text-[9px] text-theme-muted font-mono uppercase">LANGUAGE</label>
                             <select
+                              aria-label="Language"
                               value={newReporterLang}
                               onChange={(e) => setNewReporterLang(e.target.value)}
                               className="w-full text-xs p-1.5 bg-theme-bg border border-theme-border rounded-xl text-theme-text focus:ring-1 focus:ring-theme-text focus:border-theme-text focus:outline-none"
@@ -83,6 +87,7 @@ export const CommunicationLog = ({
                         <div className="space-y-1">
                           <label className="text-[9px] text-theme-muted font-mono uppercase">TRANSMITTED MESSAGE LOG</label>
                           <textarea
+                            aria-label="Transmitted Message Log"
                             placeholder="Enter field-level Spanish, French, or Portuguese transmissions..."
                             value={newReportText}
                             onChange={(e) => setNewReportText(e.target.value)}
@@ -109,7 +114,7 @@ export const CommunicationLog = ({
                     >
                       {isSystemEvaluating ? (
                         <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <RefreshCw aria-hidden="true" className="w-4 h-4 animate-spin" />
                           <span>SOP CHECKLIST INDEXING...</span>
                         </>
                       ) : (

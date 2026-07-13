@@ -7,6 +7,12 @@ import { setupServer } from "msw/node";
 import { http, HttpResponse } from "msw";
 
 // Initialize JSDOM globally
+if (typeof import.meta === 'undefined') {
+  (global as any).import = { meta: { env: { BASE_URL: '/' } } };
+} else if (!import.meta.env) {
+  (import.meta as any).env = { BASE_URL: "/" };
+}
+
 (globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) => setTimeout(() => cb(0), 0);
 (globalThis as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
 (globalThis as any).IntersectionObserver = class {

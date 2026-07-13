@@ -8,6 +8,11 @@ import { fileURLToPath } from "node:url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Polyfill import.meta.env
+if (!import.meta.env) {
+  (import.meta as any).env = { BASE_URL: '/' };
+}
+
 // Mock InterSectionObserver and animation frames
 (globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) => setTimeout(() => cb(0), 0);
 (globalThis as any).cancelAnimationFrame = (id: number) => clearTimeout(id);

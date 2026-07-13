@@ -1,3 +1,4 @@
+import React from "react";
 export interface GateData {
   id: string;
   name: string;
@@ -141,3 +142,58 @@ export const TransportAIResponseSchema = z.object({
   }),
   publicAddressSignageScript: z.string(),
 });
+
+export interface TelemetryGridProps {
+  avgGateInflow: number;
+  gates: GateData[];
+  acknowledgedAlarms: string[];
+  activeAlarmsCount: number;
+  ingressQueueAccumulation: number;
+  flowDelayMetric: number;
+  transportAIResponse: TransportAIResponse | null;
+  activeSimSegment: string;
+  setActiveSimSegment: React.Dispatch<React.SetStateAction<string>>;
+  lastEvaluationTime: string;
+}
+
+export interface GateMatrixSectorProps {
+  gates: GateData[];
+  acknowledgedAlarms: string[];
+  setAcknowledgedAlarms: React.Dispatch<React.SetStateAction<string[]>>;
+  generateSparklinePath: (gateId: string, currentLoad: number) => string;
+  updateGateLoad: (gateId: string, newLoad: number) => void;
+  setCameraVisionLogs: React.Dispatch<React.SetStateAction<string>>;
+  addLog: (msg: string) => void;
+  isSystemEvaluating: boolean;
+  cameraVisionLogs: string;
+  runCrowdEvaluation: () => Promise<void>;
+}
+
+export interface CommunicationLogProps {
+  incidentReports: MultilingualReport[];
+  removeIncidentReport: (id: string) => void;
+  handleAddCustomReport: (e: React.FormEvent) => void;
+  newReporterName: string;
+  setNewReporterName: React.Dispatch<React.SetStateAction<string>>;
+  newReporterLang: string;
+  setNewReporterLang: React.Dispatch<React.SetStateAction<string>>;
+  newReportText: string;
+  setNewReportText: React.Dispatch<React.SetStateAction<string>>;
+  isSystemEvaluating: boolean;
+  runIncidentEvaluation: () => Promise<void>;
+}
+
+export interface FleetStreamPanelProps {
+  matchMinute: number;
+  setMatchMinute: React.Dispatch<React.SetStateAction<number>>;
+  scoreHome: number;
+  setScoreHome: React.Dispatch<React.SetStateAction<number>>;
+  scoreAway: number;
+  setScoreAway: React.Dispatch<React.SetStateAction<number>>;
+  extraTimePredicted: boolean;
+  transitGridLoad: string;
+  setTransitGridLoad: React.Dispatch<React.SetStateAction<string>>;
+  runTransportEvaluation: () => Promise<void>;
+  isSystemEvaluating: boolean;
+  transportAIResponse: TransportAIResponse | null;
+}

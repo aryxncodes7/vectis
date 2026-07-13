@@ -1,10 +1,11 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from './HelperComponents';
+import { GateMatrixSectorProps } from '../types';
 
 export const GateMatrixSector = ({
   gates, acknowledgedAlarms, setAcknowledgedAlarms, generateSparklinePath, updateGateLoad, setCameraVisionLogs, addLog, isSystemEvaluating, cameraVisionLogs, runCrowdEvaluation
-}: any) => {
+}: GateMatrixSectorProps) => {
   return (<>
                 <div className="space-y-6">
                   <ScrollReveal delay={0}>
@@ -50,7 +51,7 @@ export const GateMatrixSector = ({
                                       <span className="font-bold">
                                         <AnimatedNumber value={g.loadPercentage} formatter={val => `${val}%`} />
                                       </span>
-                                      <svg className="w-10 h-4 stroke-theme-muted fill-none shrink-0" viewBox="0 0 60 20">
+                                      <svg aria-hidden="true" className="w-10 h-4 stroke-theme-muted fill-none shrink-0" viewBox="0 0 60 20">
                                         <path strokeWidth="1.5" d={generateSparklinePath(g.id, g.loadPercentage)} />
                                       </svg>
                                     </div>
@@ -69,6 +70,7 @@ export const GateMatrixSector = ({
                                     <div className="flex items-center justify-end space-x-1.5">
                                       <input
                                         type="range"
+                                        aria-label="Adjust Gate Load"
                                         min="10"
                                         max="100"
                                         value={g.loadPercentage}
@@ -77,6 +79,7 @@ export const GateMatrixSector = ({
                                       />
                                       {isWarn && !isAcked && (
                                         <button
+                                          aria-label="Acknowledge Alarm"
                                           onClick={() => setAcknowledgedAlarms((prev) => [...prev, g.id])}
                                           className="text-[8px] bg-theme-accent hover:opacity-90 border border-transparent text-white px-1.5 py-0.5 font-bold uppercase rounded-xl transition-all cursor-pointer"
                                         >
@@ -141,6 +144,7 @@ export const GateMatrixSector = ({
                         Edge-computed camera metadata synced via localized visual telemetry matrix.
                       </p>
                       <textarea
+                        aria-label="Camera Vision Logs"
                         value={cameraVisionLogs}
                         onChange={(e) => setCameraVisionLogs(e.target.value)}
                         className="w-full text-xs font-mono p-3 bg-theme-bg border border-theme-border rounded-xl text-theme-text h-20 focus:ring-1 focus:ring-theme-text focus:outline-none focus:border-theme-text transition-colors duration-150"
@@ -156,7 +160,7 @@ export const GateMatrixSector = ({
                     >
                       {isSystemEvaluating ? (
                         <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <RefreshCw aria-hidden="true" className="w-4 h-4 animate-spin" />
                           <span>MATRIX EXECUTION RUNNING...</span>
                         </>
                       ) : (

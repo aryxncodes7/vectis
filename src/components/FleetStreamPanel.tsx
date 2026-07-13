@@ -1,10 +1,11 @@
 import React from 'react';
 import { RefreshCw } from 'lucide-react';
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from './HelperComponents';
+import { FleetStreamPanelProps } from '../types';
 
 export const FleetStreamPanel = ({
   matchMinute, setMatchMinute, scoreHome, setScoreHome, scoreAway, setScoreAway, extraTimePredicted, transitGridLoad, setTransitGridLoad, runTransportEvaluation, isSystemEvaluating, transportAIResponse
-}: any) => {
+}: FleetStreamPanelProps) => {
   return (<>
                 <div className="space-y-6">
                   <ScrollReveal delay={0}>
@@ -48,6 +49,7 @@ export const FleetStreamPanel = ({
                             <span className="text-[10px] text-theme-muted font-mono uppercase block">Argentina</span>
                             <div className="flex items-center space-x-2 justify-center">
                               <MagneticButton
+                                aria-label="Decrease Home Score"
                                 onClick={() => setScoreHome((prev) => Math.max(0, prev - 1))}
                                 className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
                               >
@@ -57,6 +59,7 @@ export const FleetStreamPanel = ({
                                 <AnimatedNumber value={scoreHome} />
                               </span>
                               <MagneticButton
+                                aria-label="Increase Home Score"
                                 onClick={() => setScoreHome((prev) => prev + 1)}
                                 className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
                               >
@@ -69,6 +72,7 @@ export const FleetStreamPanel = ({
                             <span className="text-[10px] text-theme-muted font-mono uppercase block">France</span>
                             <div className="flex items-center space-x-2 justify-center">
                               <MagneticButton
+                                aria-label="Decrease Away Score"
                                 onClick={() => setScoreAway((prev) => Math.max(0, prev - 1))}
                                 className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
                               >
@@ -78,6 +82,7 @@ export const FleetStreamPanel = ({
                                 <AnimatedNumber value={scoreAway} />
                               </span>
                               <MagneticButton
+                                aria-label="Increase Away Score"
                                 onClick={() => setScoreAway((prev) => prev + 1)}
                                 className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
                               >
@@ -129,7 +134,7 @@ export const FleetStreamPanel = ({
                     >
                       {isSystemEvaluating ? (
                         <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <RefreshCw aria-hidden="true" className="w-4 h-4 animate-spin" />
                           <span>FLEET OPTIMIZATION RUNNING...</span>
                         </>
                       ) : (

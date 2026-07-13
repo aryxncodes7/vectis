@@ -170,7 +170,7 @@ export default function App() {
   const unacknowledgedAlarmsFiltered = useMemo(() => gates.filter(g => g.status !== "NORMAL" && !acknowledgedAlarms.includes(g.id)), [gates, acknowledgedAlarms]);
 
   /* Trigger evaluation for Use Case 1: Crowd */
-  const runCrowdEvaluation = async () => {
+  const runCrowdEvaluation = useCallback(async () => {
     setIsSystemEvaluating(true);
     setApiError(null);
     addLog("Ingesting localized stadium hardware matrix & optical telemetry feeds...");
@@ -233,17 +233,17 @@ export default function App() {
 
       addLog(`Crowd telemetry mapping complete. Grid status: ${resData.data.status}. Controls dispatched to localized hardware signs.`);
     } catch (err: any) {
-      console.error(err);
-      addLog(`Hardware error executing Crowd De-congestion telemetry matrix: ${err.message}`);
-      setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      const safeMsg = typeof err?.message === 'string' ? err.message.replace(/[^\w\s\.\-:]/gi, '') : "TELEMETRY LINK DEGRADED";
+      addLog(`Hardware error executing Crowd De-congestion telemetry matrix: ${safeMsg}`);
+      setApiError(safeMsg);
       setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
-  };
+  }, [gates, physicalSignage, cameraVisionLogs, addLog]);
 
   /* Trigger evaluation for Use Case 2: Incident */
-  const runIncidentEvaluation = async () => {
+  const runIncidentEvaluation = useCallback(async () => {
     setIsSystemEvaluating(true);
     setApiError(null);
     addLog("Ingesting radio communication log stream...");
@@ -263,17 +263,17 @@ export default function App() {
       setLastEvaluationTime(new Date().toLocaleTimeString());
       addLog(`Incident correlation complete. Unified SitRep compiled with priority: ${resData.data.severity}. Procedures matched to physical checklist matrices.`);
     } catch (err: any) {
-      console.error(err);
-      addLog(`Error executing telemetry mapping on communication stream: ${err.message}`);
-      setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      const safeMsg = typeof err?.message === 'string' ? err.message.replace(/[^\w\s\.\-:]/gi, '') : "TELEMETRY LINK DEGRADED";
+      addLog(`Error executing telemetry mapping on communication stream: ${safeMsg}`);
+      setApiError(safeMsg);
       setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
-  };
+  }, [incidentReports, addLog]);
 
   /* Trigger evaluation for Use Case 3: Transport */
-  const runTransportEvaluation = async () => {
+  const runTransportEvaluation = useCallback(async () => {
     setIsSystemEvaluating(true);
     setApiError(null);
     addLog("Executing matrix analysis: transit telematics vs egress parameters...");
@@ -298,16 +298,16 @@ export default function App() {
       setLastEvaluationTime(new Date().toLocaleTimeString());
       addLog(`Transit fleet dispatch recalculated. Projected egress peak: ${resData.data.egressPeakTimeUtc}. Allocating ${resData.data.ecoShuttleDispatch.fleetSizeToDeploy} transit hardware nodes.`);
     } catch (err: any) {
-      console.error(err);
-      addLog(`Error during fleet optimization matrix execution: ${err.message}`);
-      setApiError(err.message || "TELEMETRY LINK DEGRADED");
+      const safeMsg = typeof err?.message === 'string' ? err.message.replace(/[^\w\s\.\-:]/gi, '') : "TELEMETRY LINK DEGRADED";
+      addLog(`Error during fleet optimization matrix execution: ${safeMsg}`);
+      setApiError(safeMsg);
       setSystemMode("DEGRADED");
     } finally {
       setIsSystemEvaluating(false);
     }
-  };
+  }, [matchMinute, scoreHome, scoreAway, extraTimePredicted, transitGridLoad, addLog]);
 
-  const handleAddCustomReport = (e: React.FormEvent) => {
+  const handleAddCustomReport = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     if (!newReportText.trim() || !newReporterName.trim()) return;
     const newReport: MultilingualReport = {
@@ -321,15 +321,15 @@ export default function App() {
     setNewReportText("");
     setNewReporterName("");
     addLog(`Custom report added in ${newReporterLang} by ${newReporterName}.`);
-  };
+  }, [newReportText, newReporterName, newReporterLang, incidentReports.length, addLog]);
 
-  const removeIncidentReport = (id: string) => {
+  const removeIncidentReport = useCallback((id: string) => {
     setIncidentReports((prev) => prev.filter((r) => r.id !== id));
     addLog(`Removed report ID: ${id}.`);
-  };
+  }, [addLog]);
 
   /* Helper to adjust gate levels */
-  const updateGateLoad = (gateId: string, value: number) => {
+  const updateGateLoad = useCallback((gateId: string, value: number) => {
     const load = Math.min(100, Math.max(0, value));
     const queue = Math.round(load * 4.8);
     let status: "NORMAL" | "WARNING" | "CRITICAL" = "NORMAL";
@@ -358,7 +358,7 @@ export default function App() {
     if (status === "NORMAL") {
       setAcknowledgedAlarms((prev) => prev.filter((id) => id !== gateId));
     }
-  };
+  }, []);
 
   return (
     <div data-theme={theme} className="h-screen w-screen bg-theme-bg text-theme-text flex flex-col font-mono selection:bg-theme-accent selection:text-theme-panel relative overflow-hidden transition-colors duration-150">
@@ -369,11 +369,11 @@ export default function App() {
 
           {/* Logo & Wordmark */}
           <a
-            href={import.meta.env.BASE_URL}
+            href={import.meta.env?.BASE_URL || "/"}
             aria-label="Scope Home"
             className="flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
-            <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="SCOPE Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain mix-blend-screen invert brightness-200" />
+            <img src={`${import.meta.env?.BASE_URL || "/"}favicon.png`} alt="SCOPE Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain mix-blend-screen invert brightness-200" />
             <span className="text-sm sm:text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
           </a>
 
