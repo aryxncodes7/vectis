@@ -38,4 +38,25 @@ describe("API Utils: gemini.ts", () => {
       assert.strictEqual(e.message, "403 Forbidden");
     }
   });
+
+  test("generateContentWithRetry implements exponential backoff on 503 UNAVAILABLE", async () => {
+    let attempts = 0;
+    const mockClient = {
+      models: {
+        generateContent: async () => {
+          attempts++;
+          if (attempts === 1) {
+            const error = new Error("503 Service Unavailable");
+            (error as any).status = 503;
+            throw error;
+          }
+          return { text: "Success after retry" };
+        }
+      }
+    };
+    
+    const result = await generateContentWithRetry(mockClient, {}, 3);
+    assert.strictEqual(attempts, 2, "Should have retried exactly once");
+    assert.strictEqual(result.text, "Success after retry");
+  });
 });

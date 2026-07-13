@@ -61,13 +61,13 @@ npm install
 ### 2. Configuration (Environment Variables)
 
 > [!WARNING]  
-> **Security Critical:** Never commit your `.env` file to version control. Ensure that `.env` is explicitly listed in your `.gitignore` to prevent leaking your Gemini API keys to the public repository.
+> **Security Critical:** Never commit your `.env.local` file to version control. Ensure that `.env.local` is explicitly listed in your `.gitignore` to prevent leaking your Gemini API keys to the public repository.
 
-To enable the **LIVE_CORE** (real Gemini API calls), configure your `.env` file:
+To enable the **LIVE_CORE** (real Gemini API calls), configure your `.env.local` file:
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
-Open `.env` and replace `MY_GEMINI_API_KEY` with your actual Google Gemini API key:
+Open `.env.local` and replace `MY_GEMINI_API_KEY` with your actual Google Gemini API key:
 ```env
 GEMINI_API_KEY="your_actual_api_key_here"
 ```
