@@ -28,7 +28,7 @@ import {
   Moon,
 } from "lucide-react";
 
-import { GateData, Signage, MultilingualReport } from "./types";
+import { GateData, Signage, MultilingualReport, CrowdAIResponse, IncidentAIResponse, TransportAIResponse } from "./types";
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from "./components/HelperComponents";
 
 export default function App() {
@@ -84,7 +84,7 @@ export default function App() {
     "North Concourse cameras detect dense crowd accumulation near food vendors spilling into ticket turnstile lanes."
   );
 
-  const [crowdAIResponse, setCrowdAIResponse] = useState<any>(null);
+  const [crowdAIResponse, setCrowdAIResponse] = useState<CrowdAIResponse | null>(null);
 
   const [incidentReports, setIncidentReports] = useState<MultilingualReport[]>([
     {
@@ -113,14 +113,14 @@ export default function App() {
   const [newReporterName, setNewReporterName] = useState<string>("");
   const [newReporterLang, setNewReporterLang] = useState<string>("Spanish (ES)");
   const [newReportText, setNewReportText] = useState<string>("");
-  const [incidentAIResponse, setIncidentAIResponse] = useState<any>(null);
+  const [incidentAIResponse, setIncidentAIResponse] = useState<IncidentAIResponse | null>(null);
 
   const [matchMinute, setMatchMinute] = useState<number>(75);
   const [scoreHome, setScoreHome] = useState<number>(2);
   const [scoreAway, setScoreAway] = useState<number>(2);
   const [extraTimePredicted, setExtraTimePredicted] = useState<boolean>(true);
   const [transitGridLoad, setTransitGridLoad] = useState<string>("Medium - Metro delays reported due to signaling issues");
-  const [transportAIResponse, setTransportAIResponse] = useState<any>(null);
+  const [transportAIResponse, setTransportAIResponse] = useState<TransportAIResponse | null>(null);
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -157,9 +157,15 @@ export default function App() {
     fetchHealth();
   }, []);
 
-  const addLog = (msg: string) => {
+  const addLog = useCallback((msg: string) => {
     setSystemLogs((prev) => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev.slice(0, 49)]);
-  };
+  }, []);
+
+  const avgGateInflow = useMemo(() => Math.round(gates.reduce((acc, g) => acc + g.loadPercentage, 0) / gates.length), [gates]);
+  const activeAlarmsCount = useMemo(() => gates.filter(g => g.status !== "NORMAL").length, [gates]);
+  const ingressQueueAccumulation = useMemo(() => gates.reduce((acc, g) => acc + g.queueLength, 0), [gates]);
+  const flowDelayMetric = useMemo(() => (ingressQueueAccumulation / 300).toFixed(1), [ingressQueueAccumulation]);
+  const unacknowledgedAlarmsFiltered = useMemo(() => gates.filter(g => g.status !== "NORMAL" && !acknowledgedAlarms.includes(g.id)), [gates, acknowledgedAlarms]);
 
   /* Trigger evaluation for Use Case 1: Crowd */
   const runCrowdEvaluation = async () => {
@@ -356,17 +362,17 @@ export default function App() {
     <div data-theme={theme} className="h-screen w-screen bg-theme-bg text-theme-text flex flex-col font-mono selection:bg-theme-accent selection:text-theme-panel relative overflow-hidden transition-colors duration-150">
 
       {/* FLOATING PILL NAVBAR */}
-      <div className="fixed top-4 left-0 right-0 z-50 mx-auto w-[calc(100%-2rem)] max-w-4xl">
-        <header className="rounded-full bg-black/95 backdrop-blur-md text-white px-7 py-3.5 flex items-center justify-between shadow-2xl shadow-black/50 border border-neutral-800/80 transition-all duration-150">
+      <div className="fixed top-4 left-0 right-0 z-50 mx-auto w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-4xl">
+        <header className="rounded-full bg-black/95 backdrop-blur-md text-white px-3 py-2 sm:px-7 sm:py-3.5 flex items-center justify-between shadow-2xl shadow-black/50 border border-neutral-800/80 transition-all duration-150">
 
           {/* Logo & Wordmark */}
           <a
             href={import.meta.env.BASE_URL}
             aria-label="Scope Home"
-            className="flex items-center space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
+            className="flex items-center space-x-2 sm:space-x-2.5 cursor-pointer hover:opacity-85 active:scale-95 transition-all text-left focus:outline-none"
           >
-            <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="SCOPE Logo" className="w-9 h-9 object-contain mix-blend-screen invert brightness-200" />
-            <span className="text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
+            <img src={`${import.meta.env.BASE_URL}favicon.png`} alt="SCOPE Logo" className="w-8 h-8 sm:w-9 sm:h-9 object-contain mix-blend-screen invert brightness-200" />
+            <span className="hidden sm:block text-xl font-black tracking-widest uppercase text-white leading-none">SCOPE</span>
           </a>
 
           {/* Thin Divider */}
@@ -379,26 +385,26 @@ export default function App() {
               role="tab"
               aria-selected={activeWorkspaceTab === "simulation"}
               aria-label="Live Simulator Tab"
-              className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "simulation"
+              className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "simulation"
                   ? "bg-neutral-800/80 text-white font-extrabold border border-neutral-700/50"
                   : "text-neutral-400 hover:text-white"
                 }`}
             >
               <Activity className="w-3.5 h-3.5 shrink-0" />
-              <span>LIVE SIMULATOR</span>
+              <span className="hidden sm:inline">LIVE SIMULATOR</span>
             </button>
             <button
               onClick={() => setActiveWorkspaceTab("blueprint")}
               role="tab"
               aria-selected={activeWorkspaceTab === "blueprint"}
               aria-label="Blueprint Reference Tab"
-              className={`px-4 py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "blueprint"
+              className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-full text-[10px] font-bold tracking-wider transition-all duration-150 cursor-pointer flex items-center space-x-1 ${activeWorkspaceTab === "blueprint"
                   ? "bg-neutral-800/80 text-white font-extrabold border border-neutral-700/50"
                   : "text-neutral-400 hover:text-white"
                 }`}
             >
               <BookOpen className="w-3.5 h-3.5 shrink-0" />
-              <span>BLUEPRINT</span>
+              <span className="hidden sm:inline">BLUEPRINT</span>
             </button>
           </div>
 
@@ -461,7 +467,7 @@ export default function App() {
                 <span><strong>UNACKNOWLEDGED STATUS ALERT:</strong> Peripheral Gate telemetry values exceed optimal parameters.</span>
               </div>
               <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
-                {gates.filter(g => g.status !== "NORMAL" && !acknowledgedAlarms.includes(g.id)).map(g => (
+                {unacknowledgedAlarmsFiltered.map(g => (
                   <div key={g.id} className="flex items-center space-x-2 bg-theme-accent/10 border border-theme-accent/30 px-2 py-1 text-[9px]">
                     <span>{g.name.split(" (")[0]}: {g.loadPercentage}% LOAD</span>
                     <button
@@ -489,7 +495,7 @@ export default function App() {
                   <div>
                     <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">01 - AVG GATE INFLOW INDEX</div>
                     <div className="text-4xl font-extrabold text-theme-text tracking-tight mt-1">
-                      <AnimatedNumber value={Math.round(gates.reduce((acc, g) => acc + g.loadPercentage, 0) / gates.length)} formatter={val => `${val}%`} />
+                      <AnimatedNumber value={avgGateInflow} formatter={val => `${val}%`} />
                     </div>
                   </div>
                   <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
@@ -503,7 +509,7 @@ export default function App() {
                   <div>
                     <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">02 - ACTIVE DECONGESTION ALARMS</div>
                     <div className={`text-4xl font-extrabold tracking-tight mt-1 ${gates.some(g => g.status !== "NORMAL") ? "text-theme-accent" : "text-theme-text"}`}>
-                      <AnimatedNumber value={gates.filter(g => g.status !== "NORMAL").length} />
+                      <AnimatedNumber value={activeAlarmsCount} />
                     </div>
                   </div>
                   <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
@@ -519,12 +525,12 @@ export default function App() {
                   <div>
                     <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">03 - INGRESS QUEUE ACCUMULATION</div>
                     <div className="text-4xl font-extrabold text-theme-text tracking-tight mt-1">
-                      <AnimatedNumber value={gates.reduce((acc, g) => acc + g.queueLength, 0)} formatter={val => `${val}`} />
+                      <AnimatedNumber value={ingressQueueAccumulation} formatter={val => `${val}`} />
                     </div>
                   </div>
                   <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
                     <span>FLOW DELAY METRIC:</span>
-                    <span className="text-theme-text font-bold">~{(gates.reduce((acc, g) => acc + g.queueLength, 0) / 300).toFixed(1)} M/S</span>
+                    <span className="text-theme-text font-bold">~{flowDelayMetric} M/S</span>
                   </div>
                 </GlowPanel>
 
@@ -551,24 +557,24 @@ export default function App() {
                 </div>
 
                 {/* Simulation Mode Segment Selector */}
-                <div className="flex space-x-1.5 p-0.5 bg-theme-bg/60 rounded-2xl border border-theme-border/30 relative overflow-hidden mt-2 md:mt-0">
+                <div className="flex flex-wrap sm:flex-nowrap gap-1 sm:space-x-1.5 p-0.5 bg-theme-bg/60 rounded-2xl border border-theme-border/30 relative overflow-hidden mt-2 md:mt-0 justify-center">
                   <button
                     onClick={() => setActiveSimSegment("crowd")}
-                    className={`px-4 py-1.5 rounded-xl text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "crowd" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
+                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "crowd" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
                       }`}
                   >
                     GATE MATRIX
                   </button>
                   <button
                     onClick={() => setActiveSimSegment("incident")}
-                    className={`px-4 py-1.5 rounded-xl text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "incident" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
+                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "incident" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
                       }`}
                   >
                     COMM LOG
                   </button>
                   <button
                     onClick={() => setActiveSimSegment("transport")}
-                    className={`px-4 py-1.5 rounded-xl text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "transport" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
+                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "transport" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
                       }`}
                   >
                     FLEET STREAM
