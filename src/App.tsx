@@ -27,6 +27,11 @@ export const ALERT_STATUS = {
 
 import { GateData, Signage, MultilingualReport, CrowdAIResponse, IncidentAIResponse, TransportAIResponse } from "./types";
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from "./components/HelperComponents";
+import { TelemetryGrid } from './components/TelemetryGrid';
+import { GateMatrixSector } from './components/GateMatrixSector';
+import { CommunicationLog } from './components/CommunicationLog';
+import { FleetStreamPanel } from './components/FleetStreamPanel';
+
 
 export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -484,530 +489,70 @@ export default function App() {
           <div className="flex flex-col">
 
             {/* Section 1: Above the fold - KPI Cards & Segment Switcher */}
-            <ScrollReveal delay={0.05} className="px-6 py-6 space-y-6 border-b border-theme-border bg-theme-bg">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-
-                {/* Card 01 */}
-                <GlowPanel dominant={true} className="p-4 flex flex-col justify-between h-full">
-                  <div>
-                    <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">01 - AVG GATE INFLOW INDEX</div>
-                    <div className="text-4xl font-extrabold text-theme-text tracking-tight mt-1">
-                      <AnimatedNumber value={avgGateInflow} formatter={val => `${val}%`} />
-                    </div>
-                  </div>
-                  <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
-                    <span>SYSTEM BALANCE:</span>
-                    <span className="font-bold text-theme-text">OPTIMAL</span>
-                  </div>
-                </GlowPanel>
-
-                {/* Card 02 */}
-                <GlowPanel dominant={false} className={`p-4 flex flex-col justify-between h-full transition-colors duration-150 ${gates.some(g => g.status !== "NORMAL" && !acknowledgedAlarms.includes(g.id)) ? "border-theme-accent/50 bg-theme-accent/5" : ""}`}>
-                  <div>
-                    <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">02 - ACTIVE DECONGESTION ALARMS</div>
-                    <div className={`text-4xl font-extrabold tracking-tight mt-1 ${gates.some(g => g.status !== "NORMAL") ? "text-theme-accent" : "text-theme-text"}`}>
-                      <AnimatedNumber value={activeAlarmsCount} />
-                    </div>
-                  </div>
-                  <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
-                    <span>SECTOR STRESS FACTOR:</span>
-                    <span className={gates.some(g => g.status !== "NORMAL") ? "text-theme-accent font-bold" : "text-theme-muted"}>
-                      {gates.some(g => g.status !== "NORMAL") ? "ATTN REQ" : "NOMINAL"}
-                    </span>
-                  </div>
-                </GlowPanel>
-
-                {/* Card 03 */}
-                <GlowPanel dominant={false} className="p-4 flex flex-col justify-between h-full">
-                  <div>
-                    <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">03 - INGRESS QUEUE ACCUMULATION</div>
-                    <div className="text-4xl font-extrabold text-theme-text tracking-tight mt-1">
-                      <AnimatedNumber value={ingressQueueAccumulation} formatter={val => `${val}`} />
-                    </div>
-                  </div>
-                  <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
-                    <span>FLOW DELAY METRIC:</span>
-                    <span className="text-theme-text font-bold">~{flowDelayMetric} M/S</span>
-                  </div>
-                </GlowPanel>
-
-                {/* Card 04 */}
-                <GlowPanel dominant={false} className="p-4 flex flex-col justify-between h-full">
-                  <div>
-                    <div className="text-[10px] text-theme-muted tracking-wider uppercase font-bold">04 - TOURNAMENT TRANSIT METRIC</div>
-                    <div className="text-4xl font-extrabold text-theme-text tracking-tight mt-1">
-                      <AnimatedNumber value={transportAIResponse?.ecoShuttleDispatch?.co2SavedKgEst || 114} formatter={val => `${val} KG`} />
-                    </div>
-                  </div>
-                  <div className="text-[9px] text-theme-muted mt-2 flex items-center justify-between">
-                    <span>CO2 DISPLACEMENT:</span>
-                    <span className="text-theme-text font-bold">ACTIVE</span>
-                  </div>
-                </GlowPanel>
-
-              </div>
-
-              {/* Subtitle/Selector panel */}
-              <div className="bg-theme-panel/70 backdrop-blur-md border border-theme-border/40 p-2 rounded-2xl shadow-sm flex flex-col md:flex-row items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-bold text-theme-muted uppercase tracking-widest">ACTIVE MONITORING VECTOR</span>
-                </div>
-
-                {/* Simulation Mode Segment Selector */}
-                <div className="flex flex-wrap sm:flex-nowrap gap-1 sm:space-x-1.5 p-0.5 bg-theme-bg/60 rounded-2xl border border-theme-border/30 relative overflow-hidden mt-2 md:mt-0 justify-center">
-                  <button
-                    onClick={() => setActiveSimSegment("crowd")}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "crowd" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
-                      }`}
-                  >
-                    GATE MATRIX
-                  </button>
-                  <button
-                    onClick={() => setActiveSimSegment("incident")}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "incident" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
-                      }`}
-                  >
-                    COMM LOG
-                  </button>
-                  <button
-                    onClick={() => setActiveSimSegment("transport")}
-                    className={`px-3 py-1.5 sm:px-4 sm:py-1.5 rounded-xl text-[9px] sm:text-[10px] uppercase font-mono tracking-widest font-bold transition-colors duration-150 cursor-pointer ${activeSimSegment === "transport" ? "bg-theme-text text-theme-panel" : "text-theme-muted hover:text-theme-text"
-                      }`}
-                  >
-                    FLEET STREAM
-                  </button>
-                </div>
-
-                {/* System Telemetry Refresh indicator */}
-                <div className="hidden lg:flex items-center space-x-4 text-[10px] text-theme-muted font-mono mt-2 md:mt-0">
-                  <span>REFRESH: <b className="text-theme-text">30S RUNTIME</b></span>
-                  <span className="text-theme-border">|</span>
-                  <span>LAST DISPATCH: <b className="text-theme-text">{lastEvaluationTime}</b></span>
-                </div>
-              </div>
-            </ScrollReveal>
+            <TelemetryGrid
+              avgGateInflow={avgGateInflow}
+              gates={gates}
+              acknowledgedAlarms={acknowledgedAlarms}
+              activeAlarmsCount={activeAlarmsCount}
+              ingressQueueAccumulation={ingressQueueAccumulation}
+              flowDelayMetric={flowDelayMetric}
+              transportAIResponse={transportAIResponse}
+              activeSimSegment={activeSimSegment}
+              setActiveSimSegment={setActiveSimSegment}
+              lastEvaluationTime={lastEvaluationTime}
+            />
 
             {/* Section 2: Active Working Panel (unfolds on scroll) */}
             <ScrollReveal delay={0.1} className="p-6 space-y-6 bg-theme-bg/30 border-b border-theme-border">
               {/* INTERACTIVE SEGMENT: 1. CROWD & IoT SENSORS */}
               {activeSimSegment === "crowd" && (
-                <div className="space-y-6">
-                  <ScrollReveal delay={0}>
-                    <GlowPanel dominant={true} className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-theme-text">
-                          PERIPHERAL GATE TELEMETRY MATRIX
-                        </h3>
-                        <span className="text-[9px] text-theme-muted font-mono bg-theme-bg border border-theme-border px-2 py-0.5 rounded-xl">
-                          LIVE FEED
-                        </span>
-                      </div>
-
-                      <div className="overflow-x-auto">
-                        <table className="w-full table-fixed text-left border-collapse text-[11px] font-mono">
-                          <thead>
-                            <tr className="bg-theme-bg text-[9px] text-theme-muted uppercase border border-theme-border">
-                              <th className="p-2 border border-theme-border w-[8%]">ID</th>
-                              <th className="p-2 border border-theme-border w-[30%]">NODE LOCATION</th>
-                              <th className="p-2 border border-theme-border w-[25%]">GRID LOAD</th>
-                              <th className="p-2 border border-theme-border w-[20%]">STATUS</th>
-                              <th className="p-2 border border-theme-border w-[17%] text-right">ACTION</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {gates.map((g) => {
-                              const isWarn = g.status !== "NORMAL";
-                              const isAcked = acknowledgedAlarms.includes(g.id);
-
-                              let rowStyle = "text-theme-text hover:bg-theme-border/25";
-                              if (isWarn) {
-                                rowStyle = !isAcked
-                                  ? "bg-theme-accent/5 text-theme-accent border-l-2 border-l-theme-accent font-medium"
-                                  : "text-theme-muted opacity-75 hover:bg-theme-border/25";
-                              }
-
-                              return (
-                                <tr key={g.id} className={`transition-all duration-150 border-b border-theme-border ${rowStyle}`}>
-                                  <td className="p-2 border border-theme-border font-bold">{g.id.replace("GATE_", "")}</td>
-                                  <td className="p-2 border border-theme-border truncate max-w-[120px]">{g.name.split(" (")[0]}</td>
-                                  <td className="p-2 border border-theme-border">
-                                    <div className="flex items-center space-x-1.5">
-                                      <span className="font-bold">
-                                        <AnimatedNumber value={g.loadPercentage} formatter={val => `${val}%`} />
-                                      </span>
-                                      <svg className="w-10 h-4 stroke-theme-muted fill-none shrink-0" viewBox="0 0 60 20">
-                                        <path strokeWidth="1.5" d={generateSparklinePath(g.id, g.loadPercentage)} />
-                                      </svg>
-                                    </div>
-                                  </td>
-                                  <td className="p-2 border border-theme-border">
-                                    <div className="flex items-center space-x-1.5">
-                                      <span className={`w-2 h-2 inline-block shrink-0 rounded-full ${g.status === "CRITICAL" ? "bg-theme-accent animate-pulse" :
-                                          g.status === "WARNING" ? "bg-theme-warn" : "bg-theme-muted/50"
-                                        }`} />
-                                      <span className="text-[9px] font-bold uppercase">
-                                        {isWarn && isAcked ? "ACKD" : g.status}
-                                      </span>
-                                    </div>
-                                  </td>
-                                  <td className="p-2 border border-theme-border text-right">
-                                    <div className="flex items-center justify-end space-x-1.5">
-                                      <input
-                                        type="range"
-                                        min="10"
-                                        max="100"
-                                        value={g.loadPercentage}
-                                        onChange={(e) => updateGateLoad(g.id, parseInt(e.target.value))}
-                                        className="w-10 accent-theme-text bg-theme-bg h-1 cursor-pointer"
-                                      />
-                                      {isWarn && !isAcked && (
-                                        <button
-                                          onClick={() => setAcknowledgedAlarms((prev) => [...prev, g.id])}
-                                          className="text-[8px] bg-theme-accent hover:opacity-90 border border-transparent text-white px-1.5 py-0.5 font-bold uppercase rounded-xl transition-all cursor-pointer"
-                                        >
-                                          ACK
-                                        </button>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-
-                      <div className="pt-3 border-t border-theme-border flex items-center space-x-2">
-                        <span className="text-[9px] text-theme-muted font-mono">SCENARIO INGESTS:</span>
-                        <MagneticButton
-                          onClick={() => {
-                            updateGateLoad("GATE_A", 95);
-                            updateGateLoad("GATE_C", 20);
-                            updateGateLoad("GATE_G", 92);
-                            updateGateLoad("GATE_K", 15);
-                            setCameraVisionLogs("Vision Log: Large crowd congestion forming at North Plaza Transit Dropoff. Fans overflowing primary Gate A corridor.");
-                            addLog("Injected Gate A & G bottleneck scenario.");
-                          }}
-                          disabled={isSystemEvaluating}
-                          className="text-[9px] bg-theme-accent/10 hover:bg-theme-accent/20 disabled:opacity-50 text-theme-accent border border-theme-accent/30 px-2.5 py-1 rounded-xl font-mono font-bold cursor-pointer transition-colors"
-                        >
-                          PLAZA BOTTLE_NECK
-                        </MagneticButton>
-                        <MagneticButton
-                          onClick={() => {
-                            updateGateLoad("GATE_A", 40);
-                            updateGateLoad("GATE_C", 35);
-                            updateGateLoad("GATE_E", 45);
-                            updateGateLoad("GATE_G", 40);
-                            updateGateLoad("GATE_K", 30);
-                            setCameraVisionLogs("Vision Log: Normal flow. All plaza gates presenting nominal throughput rates.");
-                            addLog("Reset all gates to standard nominal flow loads.");
-                          }}
-                          disabled={isSystemEvaluating}
-                          className="text-[9px] bg-theme-bg hover:bg-theme-border/50 disabled:opacity-50 text-theme-muted hover:text-theme-text border border-theme-border px-2.5 py-1 rounded-xl font-mono font-bold cursor-pointer transition-colors"
-                        >
-                          CLEAR ALL
-                        </MagneticButton>
-                      </div>
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  <ScrollReveal delay={0.05}>
-                    <GlowPanel dominant={false} className="p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-theme-text">
-                          OPTICAL CAMERA FEED DIAGNOSTICS
-                        </h3>
-                        <span className="text-[9px] text-theme-muted bg-theme-bg border border-theme-border px-2 py-0.5 rounded-xl font-mono">
-                          VIDEO ANALYTICS MATRIX
-                        </span>
-                      </div>
-                      <p className="text-[10px] text-theme-muted leading-relaxed uppercase">
-                        Edge-computed camera metadata synced via localized visual telemetry matrix.
-                      </p>
-                      <textarea
-                        value={cameraVisionLogs}
-                        onChange={(e) => setCameraVisionLogs(e.target.value)}
-                        className="w-full text-xs font-mono p-3 bg-theme-bg border border-theme-border rounded-xl text-theme-text h-20 focus:ring-1 focus:ring-theme-text focus:outline-none focus:border-theme-text transition-colors duration-150"
-                      />
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  <ScrollReveal delay={0.1}>
-                    <MagneticButton
-                      onClick={runCrowdEvaluation}
-                      disabled={isSystemEvaluating}
-                      className="w-full py-2.5 bg-theme-text hover:opacity-90 disabled:bg-theme-muted/20 text-theme-panel font-bold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer"
-                    >
-                      {isSystemEvaluating ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>MATRIX EXECUTION RUNNING...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>FORCE TELEMETRY REBALANCING</span>
-                        </>
-                      )}
-                    </MagneticButton>
-                  </ScrollReveal>
-                </div>
+                <GateMatrixSector
+                  gates={gates}
+                  acknowledgedAlarms={acknowledgedAlarms}
+                  setAcknowledgedAlarms={setAcknowledgedAlarms}
+                  generateSparklinePath={generateSparklinePath}
+                  updateGateLoad={updateGateLoad}
+                  setCameraVisionLogs={setCameraVisionLogs}
+                  addLog={addLog}
+                  isSystemEvaluating={isSystemEvaluating}
+                  cameraVisionLogs={cameraVisionLogs}
+                  runCrowdEvaluation={runCrowdEvaluation}
+                />
               )}
 
               {/* INTERACTIVE SEGMENT: 2. MULTILINGUAL INCIDENTS */}
               {activeSimSegment === "incident" && (
-                <div className="space-y-6">
-                  <ScrollReveal delay={0}>
-                    <GlowPanel dominant={true} className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-theme-text">
-                          Radio Communication Log Stream
-                        </h3>
-                        <span className="text-[9px] text-theme-muted font-mono bg-theme-bg border border-theme-border px-2 py-0.5 rounded-xl">
-                          {incidentReports.length} REPORTS LOGGED
-                        </span>
-                      </div>
-
-                      <div className="space-y-3 max-h-[220px] overflow-y-auto pr-1">
-                        {incidentReports.map((report) => (
-                          <div key={report.id} className="bg-theme-bg border border-theme-border p-2.5 rounded-xl relative group">
-                            <button
-                              onClick={() => removeIncidentReport(report.id)}
-                              className="absolute top-2 right-2 text-theme-muted hover:text-theme-accent text-xs transition-colors cursor-pointer font-bold"
-                              title="Delete Report"
-                            >
-                              &times;
-                            </button>
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="text-[9px] font-bold text-theme-text bg-theme-panel border border-theme-border px-1.5 py-0.2 rounded-xl">
-                                {report.lang}
-                              </span>
-                              <span className="text-[9px] text-theme-muted font-mono font-medium">
-                                {report.reporter} ({report.role})
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-theme-text italic leading-relaxed">
-                              "{report.text}"
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  {/* Form to submit custom report inside a GlowPanel */}
-                  <ScrollReveal delay={0.05}>
-                    <GlowPanel dominant={false} className="p-4">
-                      <form onSubmit={handleAddCustomReport} className="space-y-3">
-                        <h4 className="text-[10px] font-bold text-theme-muted uppercase tracking-wider">Add Field Staff Report</h4>
-
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="space-y-1">
-                            <label className="text-[9px] text-theme-muted font-mono uppercase">STAFF NAME</label>
-                            <input
-                              type="text"
-                              placeholder="Marc Girard"
-                              value={newReporterName}
-                              onChange={(e) => setNewReporterName(e.target.value)}
-                              className="w-full text-xs p-2 bg-theme-bg border border-theme-border rounded-xl text-theme-text focus:ring-1 focus:ring-theme-text focus:border-theme-text focus:outline-none"
-                              required
-                            />
-                          </div>
-                          <div className="space-y-1">
-                            <label className="text-[9px] text-theme-muted font-mono uppercase">LANGUAGE</label>
-                            <select
-                              value={newReporterLang}
-                              onChange={(e) => setNewReporterLang(e.target.value)}
-                              className="w-full text-xs p-1.5 bg-theme-bg border border-theme-border rounded-xl text-theme-text focus:ring-1 focus:ring-theme-text focus:border-theme-text focus:outline-none"
-                            >
-                              <option value="Spanish (ES)">Spanish (ES)</option>
-                              <option value="French (FR)">French (FR)</option>
-                              <option value="Portuguese (PT)">Portuguese (PT)</option>
-                              <option value="German (DE)">German (DE)</option>
-                              <option value="Arabic (AR)">Arabic (AR)</option>
-                              <option value="English (EN)">English (EN)</option>
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="space-y-1">
-                          <label className="text-[9px] text-theme-muted font-mono uppercase">TRANSMITTED MESSAGE LOG</label>
-                          <textarea
-                            placeholder="Enter field-level Spanish, French, or Portuguese transmissions..."
-                            value={newReportText}
-                            onChange={(e) => setNewReportText(e.target.value)}
-                            className="w-full text-xs p-2 bg-theme-bg border border-theme-border rounded-xl text-theme-text h-14 focus:ring-1 focus:ring-theme-text focus:border-theme-text focus:outline-none"
-                            required
-                          />
-                        </div>
-
-                        <MagneticButton
-                          type="submit"
-                          className="w-full py-1.5 bg-theme-bg hover:bg-theme-border/50 text-theme-text border border-theme-border font-bold text-[10px] uppercase rounded-xl flex items-center justify-center space-x-1 cursor-pointer transition-colors"
-                        >
-                          <span>Inject to Ingestion Stream</span>
-                        </MagneticButton>
-                      </form>
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  <ScrollReveal delay={0.1}>
-                    <MagneticButton
-                      onClick={runIncidentEvaluation}
-                      disabled={isSystemEvaluating}
-                      className="w-full py-2.5 bg-theme-text hover:opacity-90 disabled:bg-theme-muted/20 text-theme-panel font-bold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer"
-                    >
-                      {isSystemEvaluating ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>SOP CHECKLIST INDEXING...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>FORCE PROTOCOL EXECUTION & SITREP MAPPING</span>
-                        </>
-                      )}
-                    </MagneticButton>
-                  </ScrollReveal>
-                </div>
+                <CommunicationLog
+                  incidentReports={incidentReports}
+                  removeIncidentReport={removeIncidentReport}
+                  handleAddCustomReport={handleAddCustomReport}
+                  newReporterName={newReporterName}
+                  setNewReporterName={setNewReporterName}
+                  newReporterLang={newReporterLang}
+                  setNewReporterLang={setNewReporterLang}
+                  newReportText={newReportText}
+                  setNewReportText={setNewReportText}
+                  isSystemEvaluating={isSystemEvaluating}
+                  runIncidentEvaluation={runIncidentEvaluation}
+                />
               )}
 
               {/* INTERACTIVE SEGMENT: 3. TRANSPORT DISPATCH */}
               {activeSimSegment === "transport" && (
-                <div className="space-y-6">
-                  <ScrollReveal delay={0}>
-                    <GlowPanel dominant={true} className="p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-theme-text">
-                          Match Progress & Timeline
-                        </h3>
-                        <span className="text-[9px] text-theme-muted font-mono bg-theme-bg border border-theme-border px-2 py-0.5 rounded-xl">Transit Dispatch API</span>
-                      </div>
-
-                      {/* Match Minute Slider */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="text-theme-muted">Match Timeline</span>
-                          <span className="font-mono font-bold text-theme-text">
-                            <AnimatedNumber value={matchMinute} />' Minute
-                          </span>
-                        </div>
-                        <input
-                          type="range"
-                          min="10"
-                          max="120"
-                          value={matchMinute}
-                          onChange={(e) => setMatchMinute(parseInt(e.target.value))}
-                          className="w-full accent-theme-text bg-theme-bg h-1 rounded-xl cursor-pointer"
-                        />
-                        <div className="flex justify-between text-[9px] text-theme-muted font-mono">
-                          <span>10' (Ingress)</span>
-                          <span>45' (Half)</span>
-                          <span>90' (Fulltime)</span>
-                          <span>120' (Extra)</span>
-                        </div>
-                      </div>
-
-                      {/* Score control */}
-                      <div className="bg-theme-bg p-4 rounded-xl border border-theme-border space-y-3">
-                        <span className="text-[9px] text-theme-muted font-mono block uppercase">LIVE MATCH SCORE BOARD</span>
-                        <div className="flex items-center justify-center space-x-6">
-                          <div className="text-center space-y-1">
-                            <span className="text-[10px] text-theme-muted font-mono uppercase block">Argentina</span>
-                            <div className="flex items-center space-x-2 justify-center">
-                              <MagneticButton
-                                onClick={() => setScoreHome((prev) => Math.max(0, prev - 1))}
-                                className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
-                              >
-                                -
-                              </MagneticButton>
-                              <span className="text-lg font-bold font-mono text-theme-text">
-                                <AnimatedNumber value={scoreHome} />
-                              </span>
-                              <MagneticButton
-                                onClick={() => setScoreHome((prev) => prev + 1)}
-                                className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
-                              >
-                                +
-                              </MagneticButton>
-                            </div>
-                          </div>
-                          <span className="text-theme-muted text-sm font-bold font-mono">VS</span>
-                          <div className="text-center space-y-1">
-                            <span className="text-[10px] text-theme-muted font-mono uppercase block">France</span>
-                            <div className="flex items-center space-x-2 justify-center">
-                              <MagneticButton
-                                onClick={() => setScoreAway((prev) => Math.max(0, prev - 1))}
-                                className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
-                              >
-                                -
-                              </MagneticButton>
-                              <span className="text-lg font-bold font-mono text-theme-text">
-                                <AnimatedNumber value={scoreAway} />
-                              </span>
-                              <MagneticButton
-                                onClick={() => setScoreAway((prev) => prev + 1)}
-                                className="bg-theme-panel hover:bg-theme-border/50 px-2 py-0.5 rounded-xl text-xs font-bold cursor-pointer text-theme-text"
-                              >
-                                +
-                              </MagneticButton>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Extra Time locked indicator */}
-                        <div className="flex items-center justify-between text-xs pt-2 border-t border-theme-border">
-                          <span className="text-theme-muted text-[10px] uppercase">Match Extended Outcome:</span>
-                          <span className={`px-2 py-0.5 rounded-xl font-mono text-[9px] ${extraTimePredicted
-                              ? "bg-theme-warn/10 text-theme-warn border border-theme-warn/30"
-                              : "bg-theme-panel text-theme-muted border border-theme-border"
-                            }`}>
-                            {extraTimePredicted ? "⚠️ EXTRA TIME & PENALTIES HIGHLY LIKELY" : "REGULATION EXIT (90M)"}
-                          </span>
-                        </div>
-                      </div>
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  <ScrollReveal delay={0.05}>
-                    <GlowPanel dominant={false} className="p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-[10px] font-bold uppercase tracking-wider text-theme-text">
-                          Transit Network & Schedule Delays
-                        </h3>
-                        <span className="text-[9px] text-theme-muted font-mono bg-theme-bg border border-theme-border px-2 py-0.5 rounded-xl">External API Feed</span>
-                      </div>
-                      <input
-                        type="text"
-                        value={transitGridLoad}
-                        onChange={(e) => setTransitGridLoad(e.target.value)}
-                        className="w-full text-xs font-mono p-2 bg-theme-bg border border-theme-border rounded-xl text-theme-text focus:ring-1 focus:ring-theme-text focus:border-theme-text focus:outline-none"
-                      />
-                      <p className="text-[10px] text-theme-muted leading-normal italic">
-                        The control stack cross-references this telematics feed to coordinate eco-friendly bus dispatch pre-allocation prior to game final whistle.
-                      </p>
-                    </GlowPanel>
-                  </ScrollReveal>
-
-                  <ScrollReveal delay={0.1}>
-                    <MagneticButton
-                      onClick={runTransportEvaluation}
-                      disabled={isSystemEvaluating}
-                      className="w-full py-2.5 bg-theme-text hover:opacity-90 disabled:bg-theme-muted/20 text-theme-panel font-bold text-xs tracking-wider uppercase rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer"
-                    >
-                      {isSystemEvaluating ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>FLEET OPTIMIZATION RUNNING...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>FORCE TRANSIT FLEET DISPATCH OPTIMIZATION</span>
-                        </>
-                      )}
-                    </MagneticButton>
-                  </ScrollReveal>
-                </div>
+                <FleetStreamPanel
+                  matchMinute={matchMinute}
+                  setMatchMinute={setMatchMinute}
+                  scoreHome={scoreHome}
+                  setScoreHome={setScoreHome}
+                  scoreAway={scoreAway}
+                  setScoreAway={setScoreAway}
+                  extraTimePredicted={extraTimePredicted}
+                  transitGridLoad={transitGridLoad}
+                  setTransitGridLoad={setTransitGridLoad}
+                  runTransportEvaluation={runTransportEvaluation}
+                  isSystemEvaluating={isSystemEvaluating}
+                  transportAIResponse={transportAIResponse}
+                />
               )}
 
               {/* INGESTION & PIPELINE LOGS */}
