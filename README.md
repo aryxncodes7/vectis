@@ -61,7 +61,7 @@ npm install
 ### 2. Configuration (Environment Variables)
 
 > [!WARNING]  
-> **Security Critical:** Never commit your `.env.local` file to version control. Ensure that `.env.local` is explicitly listed in your `.gitignore` to prevent leaking your Gemini API keys to the public repository.
+> **Security Critical:** Never commit your `.env.local` file to version control. Ensure that `.env.local` is explicitly listed in your `.gitignore` to prevent leaking your Gemini API keys to the public repository. For production, we strongly recommend utilizing the built-in environment variable secret management provided by your deployment platform (e.g., Vercel, Netlify, AWS Secrets Manager) instead of committing environment files.
 
 To enable the **LIVE_CORE** (real Gemini API calls), configure your `.env.local` file:
 ```bash
