@@ -1,18 +1,9 @@
-import "global-jsdom/register";
+
 import test from "node:test";
 import assert from "node:assert";
 import React from "react";
 import { render, screen, act } from "@testing-library/react";
 
-// Initialize JSDOM globally
-(globalThis as any).requestAnimationFrame = (cb: FrameRequestCallback) => setTimeout(() => cb(0), 0);
-(globalThis as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
-(globalThis as any).IntersectionObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
-(globalThis as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
 
 import { AnimatedNumber, GlowPanel, ScrollReveal, MagneticButton } from "./HelperComponents";
 

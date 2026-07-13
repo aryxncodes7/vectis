@@ -53,4 +53,20 @@ test("SCOPE App Main Orchestrator Integration Suite", async (t) => {
       assert.ok(errorBanner, "The DEGRADED error banner should be visible after a 503 API response");
     }, { timeout: 1000 });
   });
+
+  await t.test("App accurately and safely transitions to SIMULATION_FALLBACK on catastrophic LLM failure", async () => {
+    // Override the health endpoint for this specific test with a network error
+    server.use(
+      http.get("/api/health", () => {
+        return HttpResponse.error();
+      })
+    );
+    
+    render(<App />);
+    
+    await waitFor(() => {
+      const fallbackLog = screen.getByText(/Operating in high-fidelity standalone simulator mode/i);
+      assert.ok(fallbackLog, "The UI should render the simulation fallback log after a catastrophic network error");
+    }, { timeout: 1000 });
+  });
 });

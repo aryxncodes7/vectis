@@ -89,7 +89,7 @@ SCOPE is designed for mission-critical reliability and optimized for Hackathon s
 * **100% Test Parity (Test Coverage):** Complete structural `node:test` and `@testing-library/react` suites for all boundaries, polyfilled for JSDOM and Framer Motion context compatibility, maintaining a perfect 37/37 pass rate.
 * **State & Render Engine (Efficiency):** Inheritance structures and heavy DOM triggers use rigorous `useCallback` and `useMemo` caching to halt expensive layout re-render loops during real-time telemetry updates.
 * **WCAG 2.1 AA Compliance (Accessibility):** Contextual elements possess explicit `aria-label` properties while purely aesthetic assets are heavily guarded via strict `aria-hidden` bindings.
-* **Error Boundary Sanitization (Security):** All API `catch` blocks trap and Regex-sanitize raw server traces (`/[^\w\s\.\-:]/gi`), guaranteeing backend exceptions are scrubbed of sensitive stack layouts before DOM propagation.
+* **Error Boundary Sanitization (Security):** All API `catch` blocks trap and pass exceptions through a structured safe-list mapping pattern. Full raw server traces are logged exclusively on the server-side, while only clean, generic, user-friendly error codes or preset messages are returned to the client-side UI to strictly prevent any stack layout bypasses.
 * **Fault Tolerance & Retries:** If the Gemini API experiences transient overload (503 UNAVAILABLE), the system automatically applies an intelligent exponential backoff retry mechanism.
 * **Strict AI Schema Validation:** Leveraging Gemini's `responseSchema` configuration, all LLM outputs are guaranteed to return perfectly structured, machine-actionable JSON payloads.
 
